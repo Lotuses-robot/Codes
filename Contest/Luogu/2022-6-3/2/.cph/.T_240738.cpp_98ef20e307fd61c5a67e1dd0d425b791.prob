@@ -1,0 +1,1 @@
+{"name":"Local: T_240738","url":"d:\\Robot\\C++\\myCode\\Luogu\\2022-6-3\\2\\T_240738.cpp","tests":[{"id":1654246934321,"input":"4\n3\n20\n8492\n114514","output":"3\n61560\n822256526\n988192964"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Robot\\C++\\myCode\\Luogu\\2022-6-3\\2\\T_240738.cpp","group":"local","local":true}
