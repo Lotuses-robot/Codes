@@ -1,4 +1,12 @@
 // Copyright 2022 Lotuses
+// this version can get 55pts on offical data
+// it only count the first biggest answer to add
+//
+// but if you count the first biggest answer + the second biggest answer
+// you can get **100pts** on offical data
+// but it's not a true algorithm (Get WA 95pts on unoffical data)
+// (f**k ccf's data)
+// need count 3 biggest answer
 #include <cstdio>
 #include <cstring>
 #include <vector>
@@ -60,21 +68,21 @@ void bfs2() {
         for (int j = 2; j <= n; j++) {
             if (i != j && dis[1][i] <= k && dis[i][j] <= k) {
                 // puts("fk");
-                if (ans[j][0].first < sc[i] + sc[j]) {
-                    ans[j][2] = ans[j][1];
-                    ans[j][1] = ans[j][0];
-                    ans[j][0].first = sc[i] + sc[j];
-                    ans[j][0].second = i;
-                    // printf("1 %d %d %d\n", j, sc[i] + sc[j], i);
-                } else if (ans[j][1].first < sc[i] + sc[j]) {
-                    ans[j][2] = ans[j][1];
-                    ans[j][1].first = sc[i] + sc[j];
-                    ans[j][1].second = i;
-                    // printf("2 %d %d %d\n", j, sc[i] + sc[j], i);
-                } else if (ans[j][2].first < sc[i] + sc[j]) {
+                // if (ans[j][0].first < sc[i] + sc[j]) {
+                //     ans[j][2] = ans[j][1];
+                //     ans[j][1] = ans[j][0];
+                //     ans[j][0].first = sc[i] + sc[j];
+                //     ans[j][0].second = i;
+                //     // printf("1 %d %d %d\n", j, sc[i] + sc[j], i);
+                // } else if (ans[j][1].first < sc[i] + sc[j]) {
+                //     ans[j][2] = ans[j][1];
+                //     ans[j][1].first = sc[i] + sc[j];
+                //     ans[j][1].second = i;
+                //     // printf("2 %d %d %d\n", j, sc[i] + sc[j], i);
+                // } else if (ans[j][2].first < sc[i] + sc[j]) {
                     ans[j][2].first = sc[i] + sc[j];
                     ans[j][2].second = i;
-                }
+                // }
             }
         }
     }
@@ -108,8 +116,8 @@ signed main() {
     for (int i = 2; i <= n; i++) {
         for (int j = 2; j <= n; j++) {
             if (i != j && dis[i][j] <= k) {
-                for (int a = 0; a < 3; a++) {
-                    for (int b = 0; b < 3; b++) {
+                for (int a = 2; a < 3; a++) {
+                    for (int b = 2; b < 3; b++) {
                         if (ans[i][a].first == -1 || ans[j][b].first == -1) {
                             continue;
                         }
