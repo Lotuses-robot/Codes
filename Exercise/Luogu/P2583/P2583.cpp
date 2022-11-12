@@ -68,13 +68,14 @@ int main() {
         freopen("P2583.in", "r", stdin);
         freopen("P2583.out", "w", stdout);
     #endif
-    int cnt = 0;
+    int cnt = 0, inff;
     while (read(n)) {
         cnt++;
         ReadInit();
 
         memset(f, 63, sizeof(f));
         int ans = 1145141919;
+        inff = f[0];
         f[0] = 0;
         for (int i = 0, len = v.size(); i < len; i++) {
             for (int j = 0; j < i; j++) {
@@ -98,7 +99,7 @@ int main() {
         }
 
         printf("Case Number %d: ", cnt);
-        if (ans >= 100000000) { // hacks!
+        if (ans >= inff) { // hacks!
             puts("impossible");
         } else {
             printf("%d\n", ans);
