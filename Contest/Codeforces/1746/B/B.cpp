@@ -22,11 +22,13 @@ void read(T &arg, Ts&...arg_left) { // NOLINT
 int a[114514];
 
 int main() {
-    #ifdef LOCAL
-        freopen(".in", "r", stdin);
-        freopen(".out", "w", stdout);
-    #endif
+    // #ifdef LOCAL
+        // freopen(".in", "r", stdin);
+        // freopen(".out", "w", stdout);
+    // #endif
     
+    while (true);
+
     int T;
     read(T);
     while (T--) {

@@ -24,35 +24,57 @@ void read(T &arg, Ts&...arg_left) { // NOLINT
 
 int tt[102];
 struct Point {
-    int x, y, id;
+    double x, y; int id;
     bool operator != (Point b) const {
         return x != b.x && y != b.y;
     }
 };
-int cnt = 0;
+
+Point GetMid(Point a, Point b) {
+    return {(a.x + b.x) / 2, (a.y + b.y) / 2};
+}
+
+Point GetCh(Point a, Point mid) {
+    return {a.x + (mid.x - a.x) * 2, a.y + (mid.y - a.y) * 2};
+}
+
+Point Get(Point a, Point mid, Point b) {
+    Point pmid = GetMid(a, b);
+    return GetCh(mid, pmid);
+}
+
+#define M_PI		3.14159265358979323846
+double get_angle(double x1, double y1, double x2, double y2, double x3, double y3) {
+    double theta = atan2(x1 - x3, y1 - y3) - atan2(x2 - x3, y2 - y3);
+	if (theta > M_PI)
+		theta -= 2 * M_PI;
+	if (theta < -M_PI)
+		theta += 2 * M_PI;
+ 
+	theta = abs(theta * 180.0 / M_PI);
+	return theta;
+}
+
+double GetAngle(Point a, Point b, Point c) {
+    return get_angle(a.x, a.y, b.x, b.y, c.x, c.y);
+}
+
+int cnt = -1;
 std::map<int, int> mp1, mp2;
 struct City {
     Point ap[4];
     void init(Point a, Point b, Point c) {
-        mp1.clear(); mp2.clear();
-        ap[0] = a; mp1[a.x]++; mp2[a.y]++;
-        ap[1] = b; mp1[b.x]++; mp2[b.y]++;
-        ap[2] = c; mp1[c.x]++; mp2[c.y]++;
-        int x, y;
-        for (auto p : mp1) {
-            if (p.second == 1) {
-                x = p.first;
-            }
+        ap[0] = a; ap[1] = b; ap[2] = c;
+        if (fabs(GetAngle(a, b, c) - 90) <= 1e-4) {
+            ap[3] = Get(a, c, b);
         }
-        for (auto p : mp2) {
-            if (p.second == 1) {
-                y = p.second;
-            }
+        if (fabs(GetAngle(a, c, b) - 90) <= 1e-4) {
+            ap[3] = Get(a, b, c);
         }
-        ap[3] = {x, y};
-        for (int i = 0; i < 4; i++) {
-            ap[i].id = ++cnt;
+        if (fabs(GetAngle(b, c, a) - 90) <= 1e-4) {
+            ap[3] = Get(b, a, c);
         }
+        ap[0].id = ++cnt; ap[1].id = ++cnt; ap[2].id = ++cnt; ap[3].id = ++cnt;
     }
 } c[102];
 
@@ -83,24 +105,29 @@ struct Node {
 };
 std::priority_queue<Node> q;
 void dij(int s) {
-    printf("%d\n", s);
+    // printf("%d\n", s);
     memset(vis, 0, sizeof(vis));
     memset(dis, 0x42, sizeof(dis));
-    dis[s] = 0; vis[s] = true;
+    dis[s] = 0;
     q.push({s, 0});
     while (!q.empty()) {
         Node u = q.top(); q.pop();
+        if (vis[u.id]) continue;
+        vis[u.id] = true;
         for (Edge e : G[u.id]) {
-            printf("%d\n", e.to);
-            if (vis[e.to]) continue;
-            vis[e.to] = true;
-            dis[e.to] = u.dist + e.w;
-            q.push({e.to, dis[e.to]});
+            // printf("%d\n", e.to);
+            int u = e.from, v = e.to;
+            if (dis[u] + e.w < dis[v]) {
+                dis[v] = dis[u] + e.w;
+                q.push({v, dis[v]});
+            }
         }
     }
 }
 
 int main() {
+    // printf("%lf", GetAngle({2, 5}, {7, 4}, {5, 2}));
+
     #ifdef LOCAL
         freopen(".in", "r", stdin);
         freopen(".out", "w", stdout);
@@ -114,9 +141,12 @@ int main() {
         for (int i = 0; i < n; i++) {
             Point a[3];
             for (int j = 0; j < 3; j++) {
-                read(a[j].x, a[j].y);
+                scanf("%lf%lf", &a[j].x, &a[j].y);
             }
             c[i].init(a[0], a[1], a[2]);
+            for (int j = 0; j < 4; j++) {
+                // printf("(%lf, %lf)\n", c[i].ap[j].x, c[i].ap[j].y);
+            }
             read(tt[i]);
         }
 
@@ -128,17 +158,17 @@ int main() {
                         int s = c[i].ap[x].id, t = c[j].ap[y].id;
                         G[s].push_back({s, t, w});
                         G[t].push_back({t, s, w});
-                        printf("1 %d %d\n", s, t);
+                        // printf("%.0lf %.0lf %.0lf %.0lf %lf\n", c[i].ap[x].x, c[i].ap[x].y, c[j].ap[y].x, c[j].ap[y].y, w);
                     }
                 }
             }
             for (int j = 0; j < 4; j++) {
                 for (int k = j + 1; k < 4; k++) {
                     int s = c[i].ap[j].id, t = c[i].ap[k].id;
-                    double w = dist(c[i].ap[i], c[i].ap[j]) * tt[i];
+                    double w = dist(c[i].ap[j], c[i].ap[k]) * tt[i];
                     G[s].push_back({s, t, w});
                     G[t].push_back({t, s, w});
-                    printf("2 %d %d\n", s, t);
+                    // printf("! %.0lf %.0lf %.0lf %.0lf %lf\n", c[i].ap[j].x, c[i].ap[j].y, c[i].ap[k].x, c[i].ap[k].y, w);
                 }
             }
         }
@@ -149,6 +179,7 @@ int main() {
             dij(c[a].ap[i].id);
             for (int j = 0; j < 4; j++) {
                 ans = std::min(ans, dis[c[b].ap[j].id]);
+                // printf("%.0lf %.0lf %.0lf %.0lf %lf\n", c[a].ap[i].x, c[a].ap[i].y, c[b].ap[j].x, c[b].ap[j].y, dis[c[b].ap[j].id]);
             }
         }
         printf("%.1lf", ans);
