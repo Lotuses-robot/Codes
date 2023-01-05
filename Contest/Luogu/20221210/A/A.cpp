@@ -19,37 +19,27 @@ void read(T &arg, Ts&...arg_left) { // NOLINT
     read(arg_left...);
 }
 
-#define int long long
-const int p = 998244353, maxn = 200005;
+int a[114514];
 
-int inv[maxn], a[maxn], f[maxn], s[maxn];
-
-void init() {
-    inv[1] = 1;
-    for (int i = 2; i <= maxn; i++) {
-        inv[i] = (p - p / i) * inv[p % i] % p;
-    }
-}
-
-signed main() {
+int main() {
     #ifdef LOCAL
-        freopen(".in", "r", stdin);
+        freopen("data/queries4.in", "r", stdin);
         freopen(".out", "w", stdout);
     #endif
-    
-    int n;
-    read(n);
-    for (int i = 1; i < n; i++) {
+    int n, m;
+    read(n, m);
+    for (int i = 0; i < n; i++) {
         read(a[i]);
     }
 
-    init();
-
-    for (int i = n - 1; i >= 1; i--) {
-        f[i] = ((a[i] + 1) + (s[i + 1] - s[i + a[i] + 1] + p) % p) % p * inv[a[i]] % p;
-        s[i] = (s[i + 1] + f[i]) % p;
+    while (m--) {
+        int x, y;
+        read(x, y);
+        a[x - 1] -= y;
     }
 
-    printf("%lld\n", f[1]);
+    for (int i = 0; i < n; i++) {
+        printf("%d ", a[i]);
+    }
     return 0;
-} c'v'b
+}

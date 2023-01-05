@@ -1,0 +1,1 @@
+$max(q1, q2, \cdots)$
