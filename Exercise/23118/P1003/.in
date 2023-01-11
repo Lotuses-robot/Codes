@@ -1,0 +1,7 @@
+3 5
+5
+A1 input 100
+B2 input 200
+C3 sum A1 C2
+C5 avg B2 C4
+C5 output
