@@ -109,6 +109,7 @@ signed main() {
         int f, t, c;
         read(f, t, c);
         fl.insert(f, t, c);
+        fl.insert(t, f, c);
     }
     printf("%lld\n", fl.MaxFlow());
     return 0;
