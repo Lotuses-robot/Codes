@@ -103,7 +103,7 @@ void init() {
     }
 }
 
-int f[maxn][2], ans = 0, total[maxn];
+int f[500000 + 10][2], ans = 0, total[500000 + 10];
 void dp(int u, int fa) {
     int g1 = pow2[siz[u]] - 1, g0 = 1; bool leaf = 0;
     for (Edge e : Gra[u]) {
