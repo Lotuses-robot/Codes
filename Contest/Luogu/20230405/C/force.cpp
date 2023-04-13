@@ -126,7 +126,7 @@ int getC(int cur, int i) {
 signed main() {
     #ifdef LOCAL
         freopen(".in", "r", stdin);
-        freopen(".out", "w", stdout);
+        freopen(".ans", "w", stdout);
     #endif
     
     read(n);
