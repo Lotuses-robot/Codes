@@ -30,7 +30,7 @@ bool Tarjan(int u) {
     for (int i = head[u]; i; i = e[i].next) {
         int v = e[i].to;
         if (!dfn[v]) {
-            Tarjan(v);
+            if (!Tarjan(v)) return false;
             low[u] = min(low[u], low[v]);
         }
         else if (vis[v]) {
