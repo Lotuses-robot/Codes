@@ -2,7 +2,7 @@
 #include <cstring>
 #include <vector>
 #include <stack>
-#include <queue>
+
 template<typename T>
 void read(T &r) { r = 0; static char ch, last; ch = getchar(), last = 'z'; while (ch < '0' || ch > '9') last = ch, ch = getchar(); while (ch >= '0' && ch <= '9') r = (r << 1) + (r << 3) + (ch ^ 48), ch = getchar(); r = (last == '-') ? -r : r; }
 template<typename T, typename...Ts>
@@ -17,8 +17,8 @@ void writeln(T x) { write(x); putchar('\n'); }
 template<typename T, typename...Ts>
 void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...); putchar('\n'); }
 
-#define maxn 200040
-#define maxm 400040
+#define maxn 200005
+#define maxm 400005
 
 struct Edge {
     int u, v;
@@ -54,16 +54,15 @@ void tarjan(int u) {
             st.pop();
         }
         ssc[sz].push_back(st.top());
-        nd[st.top()] = sz;
         in_stack[st.top()] = false;
+        nd[st.top()] = sz;
         st.pop();
     }
 }
 
 int allstatus;
-int status[maxn];
-bool full0, mem[maxn];
 
+int status[maxn];
 int dd(int u) {
     if (status[u]) return status[u];
     int sum = 0;
@@ -75,74 +74,58 @@ int dd(int u) {
     } else if (sum == 0) {
         return status[u] = 0;
     } else {
-        return status[u] = -1;
+        return status[u] = 2;
     }
 }
 
-void init2() {
-    full0 = true;
-    for (int i = 1; i <= n + 10; i++) {
-        rebuild[i].clear();
+std::vector<int> vis;
+bool f[maxn];
+bool full0;
+
+bool dfs1(int u, int fa) {
+    full0 &= (!(bool)dd(u));
+    vis.push_back(u);
+    if (dd(u) == 3) { allstatus = -1; return false; }
+    // if (dd(u) == 2 && f[fa] == 1) return false;
+    if (dd(u) != 0 && f[fa] == 0) { allstatus = -1; return false; }
+    f[u] = f[fa] && dd(u);
+
+    for (Edge e : rever[u]) {
+        if (e.v != fa) {
+            bool ref = dfs1(e.v, u);
+            if (!ref) return false;
+        }
+    }
+    return true;
+}
+
+void init() {
+    for (int i = 1; i <= n + 100; i++) {
         rever[i].clear();
-    }
-    for (int i = 1; i <= sz + 100; i++) {
-        ssc[i].clear();
-    }
-    tm = 0; sz = 0;
-    for (int i = 1; i <= n + 10; i++) {
-        edges[i].clear();
     }
     memset(low, 0, sizeof(int) * (n + 10));
     memset(dfn, 0, sizeof(int) * (n + 10));
     memset(nd, 0, sizeof(int) * (n + 10));
     memset(status, 0, sizeof(int) * (n + 10));
-    memset(mem, 0, sizeof(bool) * (n + 10));
+    memset(f, 0, sizeof(bool) * (n + 10));
     allstatus = 0;
 }
 
-int in[maxn];
-std::vector<int> L;
-std::queue<int> S;
-
-bool toposort() {
-    L.clear();
-    for (int i = 1; i <= sz; i++)
-        if ((in[i] = rever[i].size()) == 0) S.push(i);
-    while (!S.empty()) {
-        int u = S.front();
-        S.pop();
-        if (!mem[u]) L.push_back(u), mem[u] = true;
-        for (auto v : rebuild[u]) {
-            if (--in[v.v] == 0) {
-                S.push(v.v);
-            }
-        }
+void init2() {
+    for (int i = 1; i <= n + 10; i++) {
+        edges[i].clear();
+        rebuild[i].clear();
     }
-    memset(mem, 0, sizeof(bool) * (n + 10));
-    if (L.size() == sz) {
-        return true;
-    } else {
-        return false;
+    for (int i = 1; i <= sz + 100; i++) {
+        ssc[i].clear();
     }
-}
-
-bool search(int u) {
-    mem[u] = true;
-    for (Edge e : rebuild[u]) {
-        if (dd(e.v) == 0) {
-            return false;
-        }
-        bool res = search(e.v);
-        if (!res) return false;
-            // return true;
-    }
-    return true;
+    tm = 0; sz = 0;
 }
 
 int main() {
     #ifdef LOCAL
-        freopen("hack/5.in", "r", stdin);
-        freopen("hack/5.out", "w", stdout);
+        freopen(".in", "r", stdin);
+        freopen(".out", "w", stdout);
     #endif
     
     int T;
@@ -152,17 +135,11 @@ int main() {
         init2();
         for (int i = 1; i <= n; i++) {
             read(color[i]);
-            full0 &= (color[i] == 0);
         }
         for (int i = 1; i <= m; i++) {
             static int u, v;
             read(u, v);
             edges[u].push_back({u, v});
-        }
-
-        if (full0) {
-            putchar('B');
-            continue;
         }
 
         for (int i = 1; i <= n; i++) {
@@ -178,56 +155,57 @@ int main() {
             }
         }
 
-        if (sz == 2 && (dd(1) == 1 && dd(2) == 0 && rebuild[2].size() == 0 && rebuild[1].size() != 0 || 
-                        dd(2) == 1 && dd(1) == 0 && rebuild[1].size() == 0 && rebuild[2].size() != 0)) { // 1 -> 0 
-            putchar('B');
-            continue;
-        }
+        init();
 
-        if (sz == 2 && rebuild[1].size() == 0 && rebuild[2].size() == 0 && dd(1) == 1 && dd(2) == 1) {
-            putchar('B');
-            continue;
-        }
-
-        bool res = toposort();
-        if (!res) {
-            puts("fuck you bitch");
-            return 0;
-        }
-
-        bool flag = false, ans = true;
-        for (int u : L) {
-            if (dd(u) == -1) {
-                ans = false;
-                break;
-            }
-            if (dd(u) == 1 && !mem[u]) {
-                if (!flag) {
-                    if (!search(u)) {
-                        ans = false;
-                        break;
-                    } else {
-                        flag = true;
-                    }
-                } else {
-                    ans = false;
+        bool down = 0; int need = 0, b_maybe_can_win = 0; full0 = true;
+        for (int i = 1; i <= sz; i++) {
+            if (rebuild[i].size() == 0) {
+                vis.clear();
+                f[i] = dd(i);
+                need += f[i];
+                dfs1(i, i);
+                if (vis.size() == 2 && dd(vis[0]) == 0 && dd(vis[1]) == 1) {
+                    b_maybe_can_win++;
+                    // allstatus = 0;
+                }
+                // if (allstatus == 1) {
+                //     if (down) {
+                //         allstatus = -1;
+                //         break;
+                //     } else {
+                //         down = true;
+                //         allstatus = 0;
+                //     }
+                // }
+                if (allstatus < 0) {
                     break;
                 }
             }
         }
 
-        if (ans) {
-            putchar('A');
-        } else {
-            putchar('N');
+        if (sz == 2) {
+            if (rebuild[1].size() == 0 && rebuild[1].size() == 0 && f[1] == 1 && f[2] == 1) {
+                putchar('B');
+                continue;
+            }
         }
 
-        // if (rand() % 10 > 3) {
-        //     putchar('N');
-        // } else {
-        //     putchar('A');
-        // }
+        if (allstatus == -1) {
+            putchar('N');
+            continue;
+        }
 
+        if (full0 || b_maybe_can_win == 1 && sz == 1) {
+            putchar('B');
+            continue;
+        }
+
+        if (need == 1) {
+            putchar('A');
+            continue;
+        }
+
+        putchar('N');
     }
     return 0;
 }
