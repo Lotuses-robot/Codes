@@ -1,9 +1,22 @@
+/*
+You are given a string 
+S of length 
+N consisting of three kinds of characters: ., |, and *. 
+S contains exactly two | and exactly one *.
+
+Determine whether the * is between the two |, and if so, print in; otherwise, print out.
+
+More formally, determine whether one of the characters before the * is | and one of the characters after the * is |.
+
+
+.|..*...|.
+
+ in
+
+*/
 #include <cstdio>
 #include <cstring>
 #include <vector>
-#include <cstdlib>
-#include <ctime>
-#include <algorithm>
 
 template<typename T>
 void read(T &r) { r = 0; static char ch, last; ch = getchar(), last = 'z'; while (ch < '0' || ch > '9') last = ch, ch = getchar(); while (ch >= '0' && ch <= '9') r = (r << 1) + (r << 3) + (ch ^ 48), ch = getchar(); r = (last == '-') ? -r : r; }
@@ -19,30 +32,32 @@ void writeln(T x) { write(x); putchar('\n'); }
 template<typename T, typename...Ts>
 void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...); putchar('\n'); }
 
-const int maxn = 3001;
-int map[maxn][maxn];
-
-std::vector<std::pair<int, int> > v;
+char ch[100];
 
 int main() {
     #ifdef LOCAL
-        // freopen(".in", "r", stdin);
-        freopen(".in", "w", stdout);
+        freopen(".in", "r", stdin);
+        freopen(".out", "w", stdout);
     #endif
-    srand(time(NULL));
-
-    int n = 20, m = 20, q = 300;
-    writeln(n, m, q);
-    for (int i = 1; i <= q; i++) {
-        rd: int x = rand() % n + 1, y = rand() % m + 1;
-        if (!map[x][y]) map[x][y] = 1;
-        else goto rd;
-        v.push_back(std::make_pair(x, y));
+    
+    int len;
+    scanf("%d%s", &len, ch + 1);
+    int pos = 0, pl = 0, pr = 0;
+    for (int i = 1; i <= len; ++i) {
+        // putchar(ch[i]);
+        if (ch[i] == '*') {
+            pos = i;
+        }
+        if (ch[i] == '|' && pl == 0) {
+            pl = i;
+        } else if (ch[i] == '|') {
+            pr = i;
+        }
     }
-    std::sort(v.begin(), v.end());
-    for (auto p : v) {
-        writeln(p.first, p.second);
+    if (pl < pos && pos < pr) {
+        puts("in");
+    } else {
+        puts("out");
     }
     return 0;
-
 }

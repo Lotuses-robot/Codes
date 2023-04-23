@@ -151,16 +151,17 @@ long long f[maxn][maxn][3];
 
 int main() {
     #ifdef LOCAL
-        freopen(".in", "r", stdin);
+        freopen("hack/hack4.in", "r", stdin);
         freopen(".ans", "w", stdout);
     #endif
     
     int n, m, q;
     read(n, m, q);
 
-    for (int i = 1; i <= q; i++) {
+    for (int i = 1, all = q; i <= all; i++) {
         int x, y;
         read(x, y);
+        if (x > n || y > m) { q--; continue; }
         f[x][y][0] = -1;
         // puts("fk");
     }
@@ -221,12 +222,12 @@ int main() {
         }
     }
 
-    for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= m; j++) {
-            printf("%10d ", (f[i][j][0] + f[i][j][1] + f[i][j][2]) % mod);
-        }
-        putchar('\n');
-    }
+    // for (int i = 1; i <= n; i++) {
+    //     for (int j = 1; j <= m; j++) {
+    //         printf("%10d ", (f[i][j][0] + f[i][j][1] + f[i][j][2]) % mod);
+    //     }
+    //     putchar('\n');
+    // }
 
     writeln(ans);
     return 0;

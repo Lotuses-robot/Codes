@@ -2,5 +2,6 @@
 maker.exe
 force.exe
 E.exe
-pause
+fc .out .ans
+if ERRORLEVEL 1 pause
 goto st
