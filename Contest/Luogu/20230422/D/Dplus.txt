@@ -1,0 +1,35 @@
+abcdefg
+c: 0000000 -> g000000 0(f) => g (A)
+c: g000000 -> gg00000
+c: gg00000 -> fg00000 g0 => fg
+c: fg00000 -> fgg0000
+c: fgg0000 -> ggg0000
+c: ggg0000 -> gfg0000
+c: gfg0000 -> efg0000 fg0 => efg
+c: efg0000 -> efgg000
+c: efgg000 -> gfgg000 
+...
+c: gefg000 -> defg000 efg0 => defg
+...
+c: gdefg00 -> cdefg00 defg0 => cdefg
+...
+c: gcdefg0 -> bcdefg0 cdefg0 => bcdefg
+
+if g != 1 then
+bcdef => cdefg
+
+now last g is done. we have to do the same for f, e, d, c, b, a.
+
+c: 000000 -> g00000
+c: g00000 -> gg0000 g => g
+c: gg0000 -> fg0000
+c: fg0000 -> fgg000 gg => fg
+c: fgg000 -> ggg000
+c: ggg000 -> gfg000
+c: gfg000 -> efg000
+c: efg000 -> efgg00 fgg => efg
+...
+c: defg00 -> defgg0 efgg => defg
+...
+c: cdefg0 -> cdefg1 defgg => cdefg
+

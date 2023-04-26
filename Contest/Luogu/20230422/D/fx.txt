@@ -1,0 +1,4 @@
+f(i, x, y) = {
+f(i - 1, x, i - 1) + 1 + f(i - 1, i - 1, y), s[n - x + i] != s[n - y + i]
+f(i - 1, x, y), otherwise
+}
