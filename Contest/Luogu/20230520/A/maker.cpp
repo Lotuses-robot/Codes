@@ -3,6 +3,9 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
+#include <algorithm>
+#include <ctime>
+#include <cstdlib>
 
 template<typename T>
 void read(T &r) { r = 0; static char ch, last; ch = getchar(), last = 'z'; while (ch < '0' || ch > '9') last = ch, ch = getchar(); while (ch >= '0' && ch <= '9') r = (r << 1) + (r << 3) + (ch ^ 48), ch = getchar(); r = (last == '-') ? -r : r; }
@@ -25,37 +28,22 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #define debug(arg, args...) {}
 #endif
 
-#define maxn 1000006
-int a[maxn];
-
-int query(int n) {
-    int l = 1, r = n;
-    while (r - l > 3) {
-        int mid = (l + r) >> 1;
-        if (a[mid] >= n - mid + 1) {
-            r = mid;
-        } else {
-            l = mid;
-        }
-    }
-    for (int i = l; i <= r; i++) {
-        if (a[i] >= n - i + 1) return i;
-    }
-    return r;
-}
+std::vector<int> v;
 
 int main() {
     #ifdef LOCAL
-        freopen(".in", "r", stdin);
-        freopen(".out", "w", stdout);
+        freopen(".in", "w", stdout);
     #endif
     
-    int n;
-    read(n);
+    srand(time(NULL));
+    int n = 30;
+    writeln(n);
     for (int i = 1; i <= n; i++) {
-        read(a[i]);
-        write(i - query(i) + 1);
-        putchar(' ');
+        v.push_back(rand() % n + 1);
+    }
+    std::sort(v.begin(), v.end());
+    for (int p : v) {
+        write(p); putchar(' ');
     }
     return 0;
 }
