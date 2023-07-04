@@ -96,8 +96,8 @@ struct Trie {
 
 int main() {
     #ifdef LOCAL
-        freopen(".in", "r", stdin);
-        freopen(".out", "w", stdout);
+        freopen("data/2.in", "r", stdin);
+        freopen("data/2.out", "w", stdout);
     #endif
     
     int n, c;

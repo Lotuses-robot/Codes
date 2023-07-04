@@ -1,51 +1,62 @@
-#include<cstdio>
-#include<iostream> 
-const int m=20;
-int n;
-int f[200005]; 
-struct node{int kid[2],num;}trie[2000005];
-int tot=1;
-void insert(int k){//插入函数
-     int t=1,i;
-     for(i=m;i>=0;i--){//从最高位开始讨论存储
-         int now=(f[k]>>i)&1;//取出高位
-         if(trie[t].kid[now]==0)
-             trie[t].kid[now]=++tot;
-         t=trie[t].kid[now];
-     }
-     trie[t].num=k;
+#include<bits/stdc++.h>
+#define ll long long
+#define ull unsigned long long
+#define inf 2147483647
+#define mp make_pair
+#define pii pair<int,int>
+#define pb push_back
+#define r1 rt<<1
+#define r2 rt<<1|1
+#define ld long double
+using namespace std;
+ 
+inline int read(){
+	int x=0,f=1;char c=getchar();
+	while(c<'0'||c>'9'){if(c=='-')f=-1;c=getchar();}
+	while(c>='0'&&c<='9') x=(x<<1)+(x<<3)+(c^'0'),c=getchar();
+	return x*f;
 }
-int find(int k){//查询函数(查找与当前数异或值最大的数)
-    int t=1,i;
-    for(i=m;i>=0;i--){
-        int now=1-(f[k]>>i)&1;//尽量找与当前数相反的数使异或值最大
-        if(trie[t].kid[now]!=0)t=trie[t].kid[now];
-        else t=trie[t].kid[1-now];
-    }
-    return trie[t].num;
-} 
-int main(){
-    #ifdef LOCAL
-        freopen(".in", "r", stdin);
-        freopen(".out", "w", stdout);
-    #endif
-     scanf("%d",&n);
-     int i,x;
-     int s=1,t=1;
-     for(i=1;i<=n;i++){
-     	scanf("%d",&x);
-     	f[i]=f[i-1]^x;
-     }
-     int ans=f[1];
-     insert(1);
-     for(i=2;i<=n;i++){
-         int p=find(i);
-         if((f[i]^f[p])>ans){
-            ans=f[i]^f[p];
-            s=p+1;
-            t=i;
-         }
-         insert(i);
-     }
-     printf("%d %d %d",ans,s,t);
+ 
+const int N=800000;
+const int M=22;
+int i,cnt,tree[N][2],a[M],num[N],sum[100005];
+ 
+void insert(int k,int s){
+	if(s==M){num[k]=i;return;}
+	int x=a[s];
+	if(tree[k][x]) insert(tree[k][x],s+1);
+	else{
+		tree[k][x]=++cnt;
+		insert(cnt,s+1);
+	}
+}
+ 
+int find(int k,int s){
+	int x=a[s];
+	if(tree[k][x^1]) return find(tree[k][x^1],s+1);
+	if(tree[k][x]) return find(tree[k][x],s+1);
+	return num[k];
+}
+ 
+int main()
+{
+	freopen(".in","r",stdin);
+	freopen(".out","w",stdout);
+	int n=read(),ans=-1,ansl,ansr;cnt=0;
+	for(i=1;i<=n;++i){
+		int x=read(),p=0;
+		sum[i]=sum[i-1]^x;
+		x=sum[i];
+		while(p<M-1) a[++p]=x&1,x>>=1;
+		for(int j=1;j<=(p>>1);++j) swap(a[j],a[p+1-j]);
+		int y=find(0,1);
+		if((sum[i]^sum[y])>ans){
+			ansl=y+1;
+			ansr=i;
+			ans=sum[i]^sum[y];
+		}
+		insert(0,1);
+	}
+	printf("%d\n",ans,ansl,ansr);
+	return 0;
 }
