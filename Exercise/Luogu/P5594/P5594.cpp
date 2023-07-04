@@ -24,23 +24,25 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #define debug(arg, args...) {}
 #endif
 
-const int prime = 1000003;
-int n, m, cnt;
+int mp[1003][1003];
+int cnt[1003];
 
 int main() {
-    read(n, m);
-    printf("%d %d\n1 2 %d\n", prime, prime, prime - n + 2);
-    for (int i = 2; i < n; i++) {
-        printf("%d %d 1\n", i, i + 1);
-    }
-    m -= n - 1;
-    for (int i = 0, j = n; m--;) {
-        j++;
-        if (j > n) {
-            i++;
-            j = i + 2;
+    #ifdef LOCAL
+        freopen(".in", "r", stdin);
+        freopen(".out", "w", stdout);
+    #endif
+    
+    int n, m, k, t;
+    read(n, m, k);
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            read(t);
+            if (mp[t][j] == 0) mp[t][j] = 1, cnt[t]++;
         }
-        printf("%d %d 1000000000\n", i, j);
     }
+
+    for (int i = 1; i <= k; i++) printf("%d ", cnt[i]);
+    puts("");
     return 0;
 }

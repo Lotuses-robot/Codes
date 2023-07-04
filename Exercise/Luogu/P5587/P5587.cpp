@@ -1,7 +1,10 @@
 // Copyright 2023 Lotuses
 #include <cstdio>
 #include <cstring>
+#include <string>
+#include <iostream>
 #include <vector>
+#include <cmath>
 
 template<typename T>
 void read(T &r) { r = 0; static char ch, last; ch = getchar(), last = 'z'; while (ch < '0' || ch > '9') last = ch, ch = getchar(); while (ch >= '0' && ch <= '9') r = (r << 1) + (r << 3) + (ch ^ 48), ch = getchar(); r = (last == '-') ? -r : r; }
@@ -24,23 +27,46 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #define debug(arg, args...) {}
 #endif
 
-const int prime = 1000003;
-int n, m, cnt;
+std::vector<std::string> s;
+int mem[1003];
 
 int main() {
-    read(n, m);
-    printf("%d %d\n1 2 %d\n", prime, prime, prime - n + 2);
-    for (int i = 2; i < n; i++) {
-        printf("%d %d 1\n", i, i + 1);
+    #ifdef LOCAL
+        freopen(".in", "r", stdin);
+        freopen(".out", "w", stdout);
+    #endif
+    
+    std::string t;
+    std::getline(std::cin, t);
+    while (t != "EOF") {
+        s.push_back(t);
+        std::getline(std::cin, t);
     }
-    m -= n - 1;
-    for (int i = 0, j = n; m--;) {
-        j++;
-        if (j > n) {
-            i++;
-            j = i + 2;
+
+    int cnt = 0, ans = 0;
+    std::getline(std::cin, t);
+    while (t != "EOF") {
+        int i = 0, j = 0;
+        while (i < t.length() && (j < s[cnt].length() || t[i] == '<')) {
+            if (t[i] == '<') {
+                j -= 2; if (j < -1) j = 0;
+                mem[j] = 0;
+            } else {
+                mem[j] = t[i] == s[cnt][j];
+            }
+            i++; j++;
         }
-        printf("%d %d 1000000000\n", i, j);
+        for (int i = 0; i < s[cnt].length(); i++) {
+            ans += mem[i]; mem[i] = 0;
+        }
+        cnt++;
+        std::getline(std::cin, t);
+        // writeln(ans);
     }
+
+    int tt;
+    read(tt);
+
+    printf("%d\n", int(floor(ans * 60.0 / tt + 0.50000001)));
     return 0;
 }

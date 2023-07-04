@@ -24,23 +24,23 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #define debug(arg, args...) {}
 #endif
 
-const int prime = 1000003;
-int n, m, cnt;
+std::vector<int> v;
 
 int main() {
-    read(n, m);
-    printf("%d %d\n1 2 %d\n", prime, prime, prime - n + 2);
-    for (int i = 2; i < n; i++) {
-        printf("%d %d 1\n", i, i + 1);
+    #ifdef LOCAL
+        freopen(".in", "r", stdin);
+        freopen(".out", "w", stdout);
+    #endif
+    
+    int t;
+    read(t);
+    while (t != 0) {
+        v.push_back(t);
+        read(t);
     }
-    m -= n - 1;
-    for (int i = 0, j = n; m--;) {
-        j++;
-        if (j > n) {
-            i++;
-            j = i + 2;
-        }
-        printf("%d %d 1000000000\n", i, j);
+    for (int i = (int)v.size() - 1; i >= 0; i--) {
+        printf("%d ", v[i]);
     }
+    puts("");
     return 0;
 }
