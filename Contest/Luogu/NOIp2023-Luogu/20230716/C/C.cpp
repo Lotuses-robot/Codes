@@ -24,54 +24,56 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #define debug(arg, args...) {}
 #endif
 
-const int maxn = 1e5 + 5;
-int t[maxn], c[maxn], p[maxn];
-int f[maxn << 8];
-int cnt = 0;
-int itv[maxn << 8], itw[maxn << 8];
+const int maxn = 300005;
+int n;
+int s[maxn], t[maxn], x[maxn], c[maxn];
+int maxt = 1;
+int ans = 0;
 
-void insert(int ma, int t, int c) {
-    int tmp = 1;
-    while (ma > tmp) {
-        ++cnt;
-        itv[cnt] = t * tmp;
-        itw[cnt] = c * tmp;
-        ma -= tmp;
-        tmp <<= 1;
+void dfs(int T, int w) {
+    if (T > maxt) {
+        ans = std::max(ans, w);
+        return;
     }
-    tmp = ma;
-    if (tmp <= 0) return;
-    ++cnt;
-    itv[cnt] = t * tmp;
-    itw[cnt] = c * tmp;
+    for (int i = 1; i <= n; i++) {
+        if (s[i] <= T && T <= t[i]) {
+            dfs(T + x[i], w + c[i]);
+        }
+    }
+    dfs(T + 1, w);
 }
+
+int maxw[maxn];
 
 int main() {
     #ifdef LOCAL
         freopen(".in", "r", stdin);
         freopen(".out", "w", stdout);
     #endif
+    
+    read(n);
 
-    int n, tm;
-    read(n, tm);
-
-
-    memset(f, -63, sizeof(f));
+    bool subtask = 1;
 
     for (int i = 1; i <= n; i++) {
-        read(t[i], c[i], p[i]);
-        insert(p[i], c[i], t[i]);
+        read(s[i], t[i], x[i], c[i]);
+        maxt = std::max(maxt, t[i]);
+        subtask &= (x[i] == 1);
     }
 
-    int ans = -998244353;
-    f[0] = 0;
-    for (int i = 1; i <= cnt; i++) {
-        for (int v = tm; v >= itv[i]; v--) {
-            f[v] = std::max(f[v], f[v - itv[i]] + itw[i]);
-            ans = std::max(ans, f[v]);
-            // writeln(i, v, f[v]);
+    if (subtask) {
+        for (int i = 1; i <= n; i++) {
+            maxw[t[i]] = std::max(maxw[t[i]], c[i]);
         }
+        int ans = 0;
+        for (int i = 1; i <= maxt; i++) {
+            ans += maxw[i];
+        }
+        writeln(ans);
+        return 0;
     }
+
+    dfs(1, 0);
     writeln(ans);
     return 0;
 }

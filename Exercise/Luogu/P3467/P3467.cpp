@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
+#include <stack>
 
 template<typename T>
 void read(T &r) { r = 0; static char ch, last; ch = getchar(), last = 'z'; while (ch < '0' || ch > '9') last = ch, ch = getchar(); while (ch >= '0' && ch <= '9') r = (r << 1) + (r << 3) + (ch ^ 48), ch = getchar(); r = (last == '-') ? -r : r; }
@@ -23,54 +24,22 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #else
 #define debug(arg, args...) {}
 #endif
+int d, w;
 
-const int maxn = 1e5 + 5;
-int t[maxn], c[maxn], p[maxn];
-int f[maxn << 8];
-int cnt = 0;
-int itv[maxn << 8], itw[maxn << 8];
-
-void insert(int ma, int t, int c) {
-    int tmp = 1;
-    while (ma > tmp) {
-        ++cnt;
-        itv[cnt] = t * tmp;
-        itw[cnt] = c * tmp;
-        ma -= tmp;
-        tmp <<= 1;
-    }
-    tmp = ma;
-    if (tmp <= 0) return;
-    ++cnt;
-    itv[cnt] = t * tmp;
-    itw[cnt] = c * tmp;
-}
+std::stack<int> q;
 
 int main() {
     #ifdef LOCAL
         freopen(".in", "r", stdin);
         freopen(".out", "w", stdout);
     #endif
-
-    int n, tm;
-    read(n, tm);
-
-
-    memset(f, -63, sizeof(f));
-
+    
+    int n, ans = 0;
+    read(n);
     for (int i = 1; i <= n; i++) {
-        read(t[i], c[i], p[i]);
-        insert(p[i], c[i], t[i]);
-    }
-
-    int ans = -998244353;
-    f[0] = 0;
-    for (int i = 1; i <= cnt; i++) {
-        for (int v = tm; v >= itv[i]; v--) {
-            f[v] = std::max(f[v], f[v - itv[i]] + itw[i]);
-            ans = std::max(ans, f[v]);
-            // writeln(i, v, f[v]);
-        }
+        read(d, w);
+        while (!q.empty() && q.top() > w) { q.pop(); }
+        if (q.empty() || q.top() != w) ans++, q.push(w);
     }
     writeln(ans);
     return 0;

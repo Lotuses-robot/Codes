@@ -24,54 +24,17 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #define debug(arg, args...) {}
 #endif
 
-const int maxn = 1e5 + 5;
-int t[maxn], c[maxn], p[maxn];
-int f[maxn << 8];
-int cnt = 0;
-int itv[maxn << 8], itw[maxn << 8];
-
-void insert(int ma, int t, int c) {
-    int tmp = 1;
-    while (ma > tmp) {
-        ++cnt;
-        itv[cnt] = t * tmp;
-        itw[cnt] = c * tmp;
-        ma -= tmp;
-        tmp <<= 1;
-    }
-    tmp = ma;
-    if (tmp <= 0) return;
-    ++cnt;
-    itv[cnt] = t * tmp;
-    itw[cnt] = c * tmp;
-}
+int n = 34;
+int a[1000];
+int b[1000];
 
 int main() {
-    #ifdef LOCAL
-        freopen(".in", "r", stdin);
-        freopen(".out", "w", stdout);
-    #endif
-
-    int n, tm;
-    read(n, tm);
-
-
-    memset(f, -63, sizeof(f));
-
+    for (int i = 1; i <= n; i++) read(a[i]);
+    for (int i = 1; i <= n; i++) read(b[i]);
+    int minn = a[1] - b[1];
     for (int i = 1; i <= n; i++) {
-        read(t[i], c[i], p[i]);
-        insert(p[i], c[i], t[i]);
+        minn = std::min(minn, a[i] - b[i]);
     }
-
-    int ans = -998244353;
-    f[0] = 0;
-    for (int i = 1; i <= cnt; i++) {
-        for (int v = tm; v >= itv[i]; v--) {
-            f[v] = std::max(f[v], f[v - itv[i]] + itw[i]);
-            ans = std::max(ans, f[v]);
-            // writeln(i, v, f[v]);
-        }
-    }
-    writeln(ans);
+    writeln(minn);
     return 0;
 }
