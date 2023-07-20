@@ -31,10 +31,8 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 const int maxn = 100005;
 int n, m;
 std::vector<int> v[maxn];
-std::vector<int> vb[maxn];
+int a[maxn], b[maxn];
 std::vector<int> vs;
-std::vector<int> vl[maxn];
-std::vector<int> vr[maxn];
 
 signed main() {
     #ifdef LOCAL
@@ -42,125 +40,65 @@ signed main() {
         freopen(".out", "w", stdout);
     #endif
     
-    int T, r, ans = 0;
+    int T, r;
     read(T);
     while (T--) {
         int n, m;
         read(n, m);
-        if (n <= m) {
-            for (int i = 1; i <= n; i++) {
-                v[i].clear(); v[i].push_back(0); // init to 1
-                vl[i].clear(); vr[i].clear();
-            }
-        } else {
-            for (int i = 1; i <= m; i++) {
-                v[i].clear(); v[i].push_back(0); // init to 1
-                vl[i].clear(); vr[i].clear();
+        for (int i = 1; i <= n; i++) {
+            v[i].clear();
+            v[i].push_back(0);
+            for (int j = 1; j <= m; j++) {
+                read(r);
+                v[i].push_back(r);
             }
         }
         for (int i = 1; i <= n; i++) {
             for (int j = 1; j <= m; j++) {
                 read(r);
-                if (n <= m) {
-                    v[i].push_back(r);
-                } else {
-                    v[j].push_back(r);
-                }
-                // write(v[i][j]); putchar(' ');
+                v[i][j] -= r;
             }
-            // puts("");
         }
-        for (int i = 1; i <= n; i++) {
-            for (int j = 1; j <= m; j++) {
-                read(r);
-                if (n <= m) {
-                    v[i][j] -= r;
-                } else {
-                    v[j][i] -= r;
-                }
-                // write(v[i][j]); putchar(' ');
-            }
-            // puts("");
-            vb[i] = v[i];
-        }
-        if (n > m) std::swap(n, m);
+        // check -1
         
-        int ansl = 0, ansr = 0; ans = 0;
+        a[1] = 0;
+        b[1] = -v[1][1] - a[1];
+        for (int i = 2; i <= n; i++) {
+            a[i] = -v[i][1] - b[1];
+        }
+        for (int j = 2; j <= m; j++) {
+            b[j] = -v[1][j] - a[1];
+        }
+        bool flag = false;
+        for (int i = 2; i <= n; i++) {
+            for (int j = 2; j <= m; j++) {
+                if (-v[i][j] != a[i] + b[j]) {
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        if (flag) {
+            puts("-1");
+            continue;
+        }
+
+        vs.clear();
         for (int i = 1; i <= n; i++) {
-            vs = v[i];
-            std::sort(vs.begin() + 1, vs.end());
-
-            if (m & 1) {
-                int minn = vs[m / 2 + 1];
-                for (int j = 1; j <= m; j++) {
-                    v[i][j] -= minn;
-                    // write(v[i][j]); putchar(' ');
-                }
-                // puts("");
-                ans += abs(minn);
-            } else {
-                int minn = vs[m / 2];
-                vl[i].push_back(0);
-                for (int j = 1; j <= m; j++) {
-                    vl[i].push_back(v[i][j] - minn);
-                }
-                ansl += abs(minn);
-
-                minn = vs[m / 2 + 1];
-                vr[i].push_back(0);
-                for (int j = 1; j <= m; j++) {
-                    vr[i].push_back(v[i][j] - minn);
-                }
-                ansr += abs(minn);
-            }
+            vs.push_back(a[i]);
+        }
+        for (int j = 1; j <= m; j++) {
+            vs.push_back(-b[j]);
         }
 
-        if (m & 1) {
-            for (int j = 1; j <= m; j++) {
-                int eq = v[1][j];
-                for (int i = 2; i <= n; i++) {
-                    if (eq != v[i][j]) {
-                        ans = -1; break;
-                    }
-                }
-                if (ans == -1) break;
-                ans += abs(eq);
-            }
-            writeln(ans);
-        } else {
-            for (int j = 1; j <= m; j++) {
-                int eq = vl[1][j];
-                for (int i = 2; i <= n; i++) {
-                    if (eq != vl[i][j]) {
-                        ansl = -1; break;
-                    }
-                }
-                if (ansl == -1) break;
-                ansl += abs(eq);
-            }
-            
-            for (int j = 1; j <= m; j++) {
-                int eq = vr[1][j];
-                for (int i = 2; i <= n; i++) {
-                    if (eq != vr[i][j]) {
-                        ansr = -1; break;
-                    }
-                }
-                if (ansr == -1) break;
-                ansr += abs(eq);
-            }
+        std::sort(vs.begin(), vs.end());
 
-
-            if (ansl == -1 && ansr == -1) {
-                puts("-1");
-            } else if (ansl == -1) {
-                writeln(ansr);
-            } else if (ansr == -1) {
-                writeln(ansl);
-            } else {
-                writeln(std::min(ansl, ansr));
-            }
+        int mid = vs[(n + m) / 2];
+        int ans = 0;
+        for (int val : vs) {
+            ans += abs(val - mid);
         }
+        writeln(ans);
     }
     return 0;
 }
