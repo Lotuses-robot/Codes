@@ -27,19 +27,19 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 int main() {
     #ifdef LOCAL
         freopen(".in", "r", stdin);
-        freopen(".ans", "w", stdout);
+        freopen(".out", "w", stdout);
     #endif
     
-    int n;
-    read(n);
-    for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= i; j++) {
-            printf("%d ", i / j);
+    int T;
+    read(T);
+    while (T--) {
+        int a, b, c;
+        read(a, b, c);
+        if (a + b < 10 || b + c < 10 || a + c < 10) {
+            puts("No");
+        } else {
+            puts("Yes");
         }
-        puts("");
-        for (int j = 1; j <= i; j++) {
-            printf("%d ", i % j);
-        }
-        puts("");
     }
+    return 0;
 }

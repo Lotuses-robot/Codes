@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
+#include <cmath>
 
 template<typename T>
 void read(T &r) { r = 0; static char ch, last; ch = getchar(), last = 'z'; while (ch < '0' || ch > '9') last = ch, ch = getchar(); while (ch >= '0' && ch <= '9') r = (r << 1) + (r << 3) + (ch ^ 48), ch = getchar(); r = (last == '-') ? -r : r; }
@@ -24,22 +25,35 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #define debug(arg, args...) {}
 #endif
 
-int main() {
+#define int long long
+
+signed main() {
     #ifdef LOCAL
         freopen(".in", "r", stdin);
-        freopen(".ans", "w", stdout);
+        freopen(".out", "w", stdout);
     #endif
     
-    int n;
-    read(n);
-    for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= i; j++) {
-            printf("%d ", i / j);
+    int T;
+    read(T);
+    while (T--) {
+        int n, cc, q, a = 0, b = 0;
+        read(n, cc);
+        int c = -cc;
+        for (int i = 1; i <= n; i++) {
+            read(q);
+            a += 4;
+            b += 4 * q;
+            c += q * q;
         }
-        puts("");
-        for (int j = 1; j <= i; j++) {
-            printf("%d ", i % j);
+
+        int delta = sqrt(1.0 * b * b - 4.0 * a * c);
+        // writeln(delta);
+        int x = (-b + delta) / 2 / a, y = (-b - delta) / 2 / a;
+        if (x > 0) {
+            writeln(x);
+        } else {
+            writeln(y);
         }
-        puts("");
     }
+    return 0;
 }

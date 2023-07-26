@@ -24,22 +24,52 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #define debug(arg, args...) {}
 #endif
 
+const int maxn = 200005;
+int a[maxn];
+int sum[maxn];
+bool flag[maxn];
+int mp[maxn];
+int n;
+
+void init() {
+    sum[1] = mp[1];
+    flag[1] = 1;
+    for (int i = 2; i <= n; i++) {
+        sum[i] += mp[i] + mp[1];
+        if (!sum[i]) continue;
+        // if (!flag[i]) {
+            for (int j = i + i; j <= n; j += i) {
+                flag[j] = true;
+                sum[j] += mp[i];
+            }
+        // }
+    }
+}
+
 int main() {
     #ifdef LOCAL
         freopen(".in", "r", stdin);
-        freopen(".ans", "w", stdout);
+        freopen(".out", "w", stdout);
     #endif
     
-    int n;
-    read(n);
-    for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= i; j++) {
-            printf("%d ", i / j);
+    int T;
+    read(T);
+    while (T--) {
+        memset(mp, 0, sizeof(mp));
+        memset(sum, 0, sizeof(sum));
+        memset(flag, 0, sizeof(flag));
+        read(n);
+        for (int i = 1; i <= n; i++) {
+            read(a[i]);
+            if (a[i] > n) continue;
+            mp[a[i]]++;
         }
-        puts("");
-        for (int j = 1; j <= i; j++) {
-            printf("%d ", i % j);
+        init(); int ans = 0;
+        for (int i = 1; i <= n; i++) {
+            // printf("%d ", sum[i]);
+            ans = std::max(ans, sum[i]);
         }
-        puts("");
+        writeln(ans);
     }
+    return 0;
 }

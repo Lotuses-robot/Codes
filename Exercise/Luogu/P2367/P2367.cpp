@@ -24,22 +24,32 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #define debug(arg, args...) {}
 #endif
 
+const int maxn = 10000007;
+int a[maxn], pre[maxn];
+
 int main() {
     #ifdef LOCAL
         freopen(".in", "r", stdin);
-        freopen(".ans", "w", stdout);
+        freopen(".out", "w", stdout);
     #endif
     
-    int n;
-    read(n);
+    int n, p;
+    read(n, p);
     for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= i; j++) {
-            printf("%d ", i / j);
-        }
-        puts("");
-        for (int j = 1; j <= i; j++) {
-            printf("%d ", i % j);
-        }
-        puts("");
+        read(a[i]);
+        pre[i] = a[i] - a[i - 1];
     }
+    for (int i = 1; i <= p; i++) {
+        int x, y, z;
+        read(x, y, z);
+        pre[x] += z;
+        pre[y + 1] -= z;
+    }
+    int sum = 0, ans = 100;
+    for (int i = 1; i <= n; i++) {
+        sum += pre[i];
+        ans = std::min(ans, sum);
+    }
+    writeln(ans);
+    return 0;
 }

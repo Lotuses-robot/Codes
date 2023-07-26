@@ -24,22 +24,60 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #define debug(arg, args...) {}
 #endif
 
+const int maxn = 200005;
+int c[maxn];
+
 int main() {
     #ifdef LOCAL
         freopen(".in", "r", stdin);
-        freopen(".ans", "w", stdout);
+        freopen(".out", "w", stdout);
     #endif
     
-    int n;
-    read(n);
-    for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= i; j++) {
-            printf("%d ", i / j);
+    int T;
+    read(T);
+    while (T--) {
+        int n, k;
+        read(n, k);
+        for (int i = 1; i <= n; i++) {
+            read(c[i]);
         }
-        puts("");
-        for (int j = 1; j <= i; j++) {
-            printf("%d ", i % j);
+        if (c[1] == c[n]) {
+            int cnt = 0;
+            for (int i = 1; i <= n; i++) {
+                if (c[i] == c[1]) {
+                    cnt++;
+                }
+            }
+            if (cnt >= k) {
+                puts("YES");
+            } else {
+                puts("NO");
+            }
+            continue;
         }
-        puts("");
+        int ptl = -1, cnt = 0;
+        for (int i = 1; i <= n; i++) {
+            if (c[i] == c[1]) {
+                cnt++;
+                if (cnt == k) {
+                    ptl = i;
+                }
+            }
+        }
+        int ptr = -1; cnt = 0;
+        for (int i = n; i >= 1; i--) {
+            if (c[i] == c[n]) {
+                cnt++;
+                if (cnt == k) {
+                    ptr = i;
+                }
+            }
+        }
+        if (ptl <= ptr && ptl != -1 && ptr != -1) {
+            puts("YES");
+        } else {
+            puts("NO");
+        }
     }
+    return 0;
 }
