@@ -68,6 +68,9 @@ signed main() {
             if (cnt[i] == 0) {
                 if (v0[0] == -1) v0[0] = i;
                 else if (v0[1] == -1) v0[1] = i;
+                else if (i >= 1 && i <= n) {
+                    flag = true;
+                }
             }
             if (cnt[i] > 1 || (cnt[i] && i > n)) {
                 if (que == -1) que = i;
