@@ -25,7 +25,7 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #define debug(arg, args...) {}
 #endif
 
-#define int long long
+#define int __int128
 
 const int maxn = 50;
 
@@ -38,7 +38,7 @@ int px, py;
 
 int c, n, m, p, t;
 struct Item {
-    int x, y, g, w, cnt;
+    int x, y, g, gp, w, cnt;
     int count() const {
         if (w == 0) return min(m, g);
         if (p < (1ll << dis(x, y))) return 0;
@@ -62,6 +62,7 @@ signed main() {
     read(c, n, m, p, t);
     for (int i = 1; i <= c; i++) {
         read(it[i].x, it[i].y, it[i].g, it[i].w);
+        it[i].gp = it[i].g;
         map[it[i].x][it[i].y] = 1;
         it[i].cnt = 0;
     }
@@ -71,6 +72,9 @@ signed main() {
     for (px = 1; px <= n; px++)
     for (py = 1; py <= n; py++) {
         if (map[px][py]) continue;
+        for (int i = 1; i <= c; i++) {
+            it[i].g = it[i].gp;
+        }
         while (!iq.empty()) iq.pop();
         for (int i = 1; i <= c; i++) {
             iq.push(it[i]);
