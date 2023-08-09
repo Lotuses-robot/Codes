@@ -194,12 +194,7 @@ struct DLX {
 
     int ans[maxn], len;
     bool dance(int dep) {
-        // writeln(dep);
         if (nd[0].r == 0) {
-            // for (int i = 1; i <= dep - 1; i++) {
-            //     write(ans[i]); putchar(' ');
-            // }
-            // puts("");
             len = dep - 1;
             return true;
         }
@@ -268,28 +263,9 @@ int main() {
         cnt[i] += cnt[i - 1];
     }
 
-    // for (int i = 0; i < maxc; i++) {
-    //     for (int x = 0; x < 5; x++) {
-    //         for (int y = 0; y < 5; y++) {
-    //             cxk[x][y] = '.';
-    //         }
-    //     }
-    //     for (auto p : v[i]) {
-    //         cxk[p.first][p.second] = '#';
-    //     }
-    
-    //     writeln(i);
-    //     for (int x = 0; x < 5; x++) {
-    //         printf("%s\n", cxk[x]);
-    //     }
-    //     puts("");
-    // }
-
     sum[0] = flg[0];
-    // writeln('A', sum[0]);
     for (int i = 1; i < 12; i++) {
         sum[i] = sum[i - 1] + flg[i];
-        // writeln(i + 'A', sum[i]);
     }
 
     for (int i = 1; i <= 10; i++) {
@@ -307,9 +283,7 @@ int main() {
                     ls.push_back(c);
                 }
                 if (flag) {
-                    // writeln(i, j, k);
                     ls.push_back(cnt[calc(10, 10)] + sum[ch[k] - 'A']);
-                    // ls.push_back(55 + ch[k] - 'A' + 1);
                     mp.push_back(ls);
                     mpx.push_back(ch[k]);
                     mpm.push_back(k);
@@ -320,28 +294,15 @@ int main() {
     }
 
     dlx.n = mp.size(); dlx.m = cnt[calc(10, 10)] + sum[11];
-    // dlx.n = mp.size(); dlx.m = 55 + 'L' - 'A' + 1;
     dlx.build();
-
-    // writeln(dlx.n);
 
     for (int i = 0; i < mp.size(); i++) {
         for (int j : mp[i]) {
             dlx.insert(i + 1, j);
-            // write(j); putchar(' ');
-            // writeln(i + 1, j);
         }
-        // write(mpm[i]);
-        // putchar(' ');
-        // putchar(mpx[i]);
-        // puts("");
     }
     if (!dlx.dance(1)) {
         puts("No solution");
-    // dlx.dance(1);
-        // for (int i = 1; i <= 10; i++) {
-        //     printf("%s\n", cxk[i] + 1);
-        // }
     } else {
         for (int i = 1; i <= dlx.len; i++) {
             int x = cx[mpc[dlx.ans[i] - 1]], y = cy[mpc[dlx.ans[i] - 1]];
