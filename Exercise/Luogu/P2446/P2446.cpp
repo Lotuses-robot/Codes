@@ -25,74 +25,74 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #define debug(arg, args...) {}
 #endif
 
-#define int long long
-
-const int maxn = 3e5 + 5;
+const int maxn = 3005;
 int n, m;
 struct Edge {
     int v, w;
-};
-std::vector<Edge> G[maxn];
+}; std::vector<Edge> G[maxn];
+std::vector<int> dag[maxn];
+int in[maxn];
+
 struct Node {
     int dis, u;
     bool operator < (Node b) const {
-        if (dis != b.dis) return dis > b.dis;
-        return u < b.u;
+        return dis > b.dis;
     }
 };
+bool vis[maxn], stage[maxn];
+int dis[maxn];
 std::priority_queue<Node> q;
-int dis[maxn]; bool vis[maxn];
-bool ed[maxn];
-
 int dij() {
+    memset(dis, 63, sizeof(dis));
+    dis[1] = 0;
+    q.push({0, 1});
     while (!q.empty()) {
         int u = q.top().u; q.pop();
         if (vis[u]) continue;
+        if (in[u]) {
+            stage[u] = true;
+            continue;
+        }
         vis[u] = true;
-        for (auto e : G[u]) {
+        for (Edge e : G[u]) {
             if (dis[e.v] > dis[u] + e.w) {
                 dis[e.v] = dis[u] + e.w;
                 q.push({dis[e.v], e.v});
             }
         }
+        for (int v : dag[u]) {
+            in[v]--;
+            if (stage[v]) {
+                dis[v] = std::max(dis[v], dis[u]);
+                if (!in[v]) {
+                    q.push({dis[v], v});
+                }
+            }
+        }
     }
-    int min = 1e18;
-    for (int i = 1; i <= n; i++) {
-        if (ed[i]) min = std::min(min, dis[i]);
-    }
-    if (min == 1e18) return -1;
-    return min;
+    return dis[n];
 }
 
-signed main() {
+int main() {
     #ifdef LOCAL
-        freopen("data4.in", "r", stdin);
-        freopen("data4.out", "w", stdout);
+        freopen(".in", "r", stdin);
+        freopen(".out", "w", stdout);
     #endif
-
+    
+    int x, y, z;
     read(n, m);
     for (int i = 1; i <= m; i++) {
-        int x, y, z;
         read(x, y, z);
         G[x].push_back({y, z});
     }
 
-    memset(dis, 63, sizeof(dis));
-
-    int a, b;
-    read(a, b);
-    for (int i = 1; i <= a; i++) {
-        int x;
+    for (int i = 1; i <= n; i++) {
         read(x);
-        q.push({0, x});
-        dis[x] = 0;
-        // writeln(666, i);
-    }
-
-    for (int i = 1; i <= b; i++) {
-        int x;
-        read(x);
-        ed[x] = true;
+        for (int j = 1; j <= x; j++) {
+            read(y);
+            dag[y].push_back(i);
+            in[i]++;
+        }
     }
 
     writeln(dij());
