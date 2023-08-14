@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
+#include <ctime>
 
 template<typename T>
 void read(T &r) { r = 0; static char ch, last; ch = getchar(), last = 'z'; while (ch < '0' || ch > '9') last = ch, ch = getchar(); while (ch >= '0' && ch <= '9') r = (r << 1) + (r << 3) + (ch ^ 48), ch = getchar(); r = (last == '-') ? -r : r; }
@@ -24,7 +25,7 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #define debug(arg, args...) {}
 #endif
 
-const int maxn = 1e5 + 5;
+const int maxn = 1e6 + 5;
 struct Edge {
     int u, v;
 };
@@ -34,6 +35,12 @@ void ins(int u, int v) {
     G[u].push_back({u, v});
 }
 
+void dfs(int u, int fa) {
+    for (Edge e : G[u]) {
+        if (e.v != fa) dfs(e.v, u);
+    }
+}
+
 int main() {
     freopen("data.in", "r", stdin);
     freopen("data.out", "w", stdout);
@@ -41,8 +48,16 @@ int main() {
     int n, m, u, v;
     read(n, m);
     for (int i = 1; i <= m; i++) {
+        read(u, v);
         ins(u, v);
         ins(v, u);
     }
+
+    int bg = clock();
+    dfs(1, 1);
+    int ed = clock();
+
+    writeln(ed - bg);
+
     return 0;
 }
