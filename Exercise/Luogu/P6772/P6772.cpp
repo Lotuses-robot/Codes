@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
+#include <algorithm>
 
 template<typename T>
 void read(T &r) { r = 0; static char ch, last; ch = getchar(), last = 'z'; while (ch < '0' || ch > '9') last = ch, ch = getchar(); while (ch >= '0' && ch <= '9') r = (r << 1) + (r << 3) + (ch ^ 48), ch = getchar(); r = (last == '-') ? -r : r; }
@@ -24,54 +25,122 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #define debug(arg, args...) {}
 #endif
 
-const int maxn = 1e5 + 5;
-int t[maxn], c[maxn], p[maxn];
-int f[maxn << 8];
-int cnt = 0;
-int itv[maxn << 8], itw[maxn << 8];
+#define int long long 
 
-void insert(int ma, int t, int c) {
-    int tmp = 1;
-    while (ma > tmp) {
-        ++cnt;
-        itv[cnt] = t * tmp;
-        itw[cnt] = c * tmp;
-        ma -= tmp;
-        tmp <<= 1;
+int n, m, T, k;
+const int maxn = 50 * 6;
+struct Mat {
+    int a[maxn + 10][maxn + 10];
+    
+    Mat operator * (Mat b) const {
+        Mat c;
+        memset(c.a, -63, sizeof(c.a));
+        for (int i = 1; i <= maxn; i++) {
+            for (int j = 1; j <= maxn; j++) {
+                for (int k = 1; k <= maxn; k++) {
+                    c.a[i][j] = std::max(c.a[i][j], a[i][k] + b.a[k][j]);
+                }
+            }
+        }
+        return c;
     }
-    tmp = ma;
-    if (tmp <= 0) return;
-    ++cnt;
-    itv[cnt] = t * tmp;
-    itw[cnt] = c * tmp;
+
+    void print() const {
+        for (int i = 1; i <= 18; i++) {
+            for (int j = 1; j <= 18; j++) {
+                if (a[i][j] < -104426655) {
+                    printf("%3d", -1);
+                } else {
+                    printf("%3d", a[i][j]);
+                }
+            }
+            puts("");
+        }
+        puts("");
+    }
+} mt[64];
+
+int a[maxn + 10], b[maxn + 10];
+void cal(int kk) {
+    memset(b, -63, sizeof(b));
+    for (int j = 1; j <= maxn; j++) {
+        for (int k = 1; k <= maxn; k++) {
+            b[j] = std::max(b[j], a[k] + mt[kk].a[k][j]);
+        }
+    }
+    for (int i = 1; i <= maxn; i++) a[i] = b[i];
 }
 
-int main() {
+int c[maxn];
+struct de {
+    int t, x, y;
+    bool operator < (de b) const {
+        return t < b.t;
+    }
+} d[maxn];
+
+signed main() {
     #ifdef LOCAL
         freopen(".in", "r", stdin);
         freopen(".out", "w", stdout);
     #endif
+    
+    read(n, m, T, k);
+    for (int i = 1; i <= n; i++) read(c[i]);
+    memset(mt[0].a, -63, sizeof(mt[0].a));
+    for (int i = 1; i <= m; i++) {
+        int u, v, w;
+        read(u, v, w);
+        mt[0].a[n * (w - 1) + u][v] = c[v];
+    }
+    for (int i = n + 1; i <= n * 6; i++) {
+        mt[0].a[i - n][i] = 0;
+    }
+    // mt[0].print();
+    for (int i = 1; i <= std::__lg(T) + 1; i++) {
+        mt[i] = mt[i - 1] * mt[i - 1];
+        // mt[i].print();
+    }
+    for (int i = 1; i <= k; i++) {
+        read(d[i].t, d[i].x, d[i].y);
+    }
+    std::sort(d + 1, d + k + 1);
 
-    int n, tm;
-    read(n, tm);
-
-
-    memset(f, -63, sizeof(f));
-
-    for (int i = 1; i <= n; i++) {
-        read(t[i], c[i], p[i]);
-        insert(p[i], c[i], t[i]);
+    memset(a, -63, sizeof(a));
+    a[1] = 0;
+    int prev = 0;
+    for (int i = 1; i <= k; i++) {
+        int dt = d[i].t - prev; int ct = 0;
+        do {
+            if (dt & 1) cal(ct);
+            ct++;
+        } while (dt >>= 1);
+        a[d[i].x] += d[i].y;
+        prev = d[i].t;
     }
 
-    int ans = -998244353;
-    f[0] = 0;
-    for (int i = 1; i <= cnt; i++) {
-        for (int v = tm; v >= itv[i]; v--) {
-            f[v] = std::max(f[v], f[v - itv[i]] + itw[i]);
-            ans = std::max(ans, f[v]);
-            // writeln(i, v, f[v]);
-        }
+    if (prev != T) {
+        int dt = T - prev; int ct = 0;
+        do {
+            if (dt & 1) {
+                cal(ct);
+                // write(1 << ct), putchar(' ');
+                // for (int i = 1; i <= n * 6; i++) {
+                //     if (a[i] < -104426655) {
+                //         printf("%3d", -1);
+                //     } else {
+                //         printf("%3d", a[i]);
+                //     }
+                // }
+                // puts("");
+            }
+            ct++;
+        } while (dt >>= 1);
     }
-    writeln(ans);
+
+    int ans = a[1] + c[1];
+    if (ans < 0) puts("-1");
+    else writeln(a[1] + c[1]);
+    // mt[0].print();
     return 0;
 }
