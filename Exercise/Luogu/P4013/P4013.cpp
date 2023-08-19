@@ -32,9 +32,9 @@ struct Edge {
     int v, nxt;
     ll cap, cost;    
 } node[maxn];
-int cnt = 0, head[maxn], n, m;
+int idx = 0, head[maxn], n;
 void ins(int u, int v, ll w, ll c) {
-    int id = cnt++;
+    int id = idx++;
     node[id].nxt = head[u];
     node[id].cap = w;
     node[id].cost = c;
@@ -96,21 +96,128 @@ void Dinic() {
     }
 }
 
+int cnt = 0;
 ll tot[maxn];
+ll mp[40][41];
+ll up[40][41];
 int main() {
     #ifdef LOCAL
         freopen(".in", "r", stdin);
         // freopen(".out", "w", stdout);
     #endif
     
-    memset(head, -1, sizeof(head));
-    read(n, m, s, t);
-    for (int i = 1; i <= m; i++) {
-        int x, y, f, v;
-        read(x, y, f, v);
-        inse(x, y, f, v);
+    int nn, mm;
+    read(mm, nn);
+    for (int i = 1; i <= nn; i++) {
+        for (int j = 1; j <= mm + i - 1; j++) {
+            read(mp[i][j]);
+        }
     }
+
+    memset(head, -1, sizeof(head));
+    memset(node, 0, sizeof(node));
+    cnt = 0; s = ++cnt;
+    for (int i = 1; i <= nn; i++) {
+        for (int j = 1; j <= mm + i - 1; j++) {
+            if (i == 1) {
+                ++cnt;
+                inse(s, cnt, 1, 0);
+                up[i][j] = ++cnt;
+                inse(cnt - 1, cnt, 1, -mp[i][j]);
+            } else {
+                ++cnt;
+                if (j > 1) {
+                    inse(up[i - 1][j - 1], cnt, 1, 0);
+                }
+                if (j < mm + i - 1) {
+                    inse(up[i - 1][j], cnt, 1, 0);
+                }
+                up[i][j] = ++cnt;
+                inse(cnt - 1, cnt, 1, -mp[i][j]);
+            }
+        }
+    }
+    t = ++cnt;
+    for (int j = 1; j <= mm + nn - 1; j++) {
+        inse(up[nn][j], t, 1, 0);
+    }
+
+    n = cnt;
+    sum = 0; cost = 0;
     Dinic();
-    writeln(sum, cost);
+
+    writeln(-cost);
+
+    
+    memset(head, -1, sizeof(head));
+    memset(up, 0, sizeof(up));
+    memset(node, 0, sizeof(node));
+    cnt = 0; s = ++cnt;
+    for (int i = 1; i <= nn; i++) {
+        for (int j = 1; j <= mm + i - 1; j++) {
+            if (i == 1) {
+                ++cnt;
+                inse(s, cnt, 1, 0);
+                up[i][j] = ++cnt;
+                inse(cnt - 1, cnt, 0x7f7f7f7f, -mp[i][j]);
+            } else {
+                ++cnt;
+                if (j > 1) {
+                    inse(up[i - 1][j - 1], cnt, 1, 0);
+                }
+                if (j < mm + i - 1) {
+                    inse(up[i - 1][j], cnt, 1, 0);
+                }
+                up[i][j] = ++cnt;
+                inse(cnt - 1, cnt, 0x7f7f7f7f, -mp[i][j]);
+            }
+        }
+    }
+    t = ++cnt;
+    for (int j = 1; j <= mm + nn - 1; j++) {
+        inse(up[nn][j], t, 0x7f7f7f7f, 0);
+    }
+
+    n = cnt;
+    sum = 0; cost = 0;
+    Dinic();
+
+    writeln(-cost);
+
+
+    memset(head, -1, sizeof(head));
+    memset(up, 0, sizeof(up));
+    memset(node, 0, sizeof(node));
+    cnt = 0; s = ++cnt;
+    for (int i = 1; i <= nn; i++) {
+        for (int j = 1; j <= mm + i - 1; j++) {
+            if (i == 1) {
+                ++cnt;
+                inse(s, cnt, 1, 0);
+                up[i][j] = ++cnt;
+                inse(cnt - 1, cnt, 0x7f7f7f7f, -mp[i][j]);
+            } else {
+                ++cnt;
+                if (j > 1) {
+                    inse(up[i - 1][j - 1], cnt, 0x7f7f7f7f, 0);
+                }
+                if (j < mm + i - 1) {
+                    inse(up[i - 1][j], cnt, 0x7f7f7f7f, 0);
+                }
+                up[i][j] = ++cnt;
+                inse(cnt - 1, cnt, 0x7f7f7f7f, -mp[i][j]);
+            }
+        }
+    }
+    t = ++cnt;
+    for (int j = 1; j <= mm + nn - 1; j++) {
+        inse(up[nn][j], t, 0x7f7f7f7f, 0);
+    }
+
+    n = cnt;
+    sum = 0; cost = 0;
+    Dinic();
+
+    writeln(-cost);
     return 0;
 }
