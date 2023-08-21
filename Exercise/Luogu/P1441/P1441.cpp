@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
+#include <queue>
 
 template<typename T>
 void read(T &r) { r = 0; static char ch, last; ch = getchar(), last = 'z'; while (ch < '0' || ch > '9') last = ch, ch = getchar(); while (ch >= '0' && ch <= '9') r = (r << 1) + (r << 3) + (ch ^ 48), ch = getchar(); r = (last == '-') ? -r : r; }
@@ -24,15 +25,42 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #define debug(arg, args...) {}
 #endif
 
-int cntt[800], a[40];
+const int maxn = 205;
 int n, m;
-void dfs(int u, int cnt, int s) {
-    if (cnt == m + 1) {
-        cntt[s] = 1;
+int a[maxn]; bool del[maxn];
+std::vector<int> delv;
+int ans = 0;
+std::vector<int> upp;
+bool vis[20005];
+
+void upd() {
+    upp.clear(); memset(vis, 0, sizeof(vis));
+    upp.push_back(0);
+    for (int i = 1; i <= n; i++) {
+        if (!del[i]) {
+            auto npp = upp;
+            for (int u : npp) {
+                if (!vis[u + a[i]]) {
+                    upp.push_back(u + a[i]);
+                    vis[u + a[i]] = true;
+                }
+            }
+        }
     }
-    if (u > n) return;
-    dfs(u + 1, cnt + 1, s + a[u]);
-    dfs(u + 1, cnt, s);
+    ans = std::max(ans, (int)upp.size() - 1);
+}
+
+void dfs(int k) {
+    if (k == m + 1) {
+        upd();
+    }
+    for (int i = (k == 1 ? 1 : delv[k - 2] + 1); i <= n; i++) {
+        del[i] = true;
+        delv.push_back(i);
+        dfs(k + 1);
+        delv.pop_back();
+        del[i] = false;
+    }
 }
 
 int main() {
@@ -46,12 +74,7 @@ int main() {
         read(a[i]);
     }
 
-    dfs(1, 1, 0);
-
-    int ans = 0;
-    for (int i = 1; i <= 800; i++) {
-        ans += cntt[i];
-    }
+    dfs(1);
     writeln(ans);
     return 0;
 }
