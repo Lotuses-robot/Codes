@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cctype>
 #include <cstring>
+#include <stack>
 #include <vector>
 
 template<typename T>
@@ -25,7 +26,7 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #define debug(arg, args...) {}
 #endif
 
-const int maxn = 1e6 + 10;
+const int maxn = 2e6 + 10;
 char ch[maxn];
 int mp[255];
 std::vector<int> v;
@@ -49,6 +50,81 @@ int input() {
     }
 }
 
+struct Node {
+    int lc, rc, fa, x;
+} nd[maxn];
+int len = 0;
+int ins(int lc, int rc, int x) {
+    int id = ++len;
+    nd[id] = {lc, rc, -1, x};
+    return id;
+}
+std::stack<int> st;
+int rt;
+
+void bt() {
+    int l, r, fa;
+    for (int x : v) {
+        if (x > 0) {
+            st.push(ins(-1, -1, x));
+        } else if (x == -1) {
+            l = st.top(); st.pop();
+            fa = ins(l, -1, x);
+            nd[l].fa = fa;
+            st.push(fa);
+        } else {
+            l = st.top(); st.pop();
+            r = st.top(); st.pop();
+            fa = ins(l, r, x);
+            nd[l].fa = nd[r].fa = fa;
+            st.push(fa);
+        }
+    }
+    rt = 1;
+    while (~nd[rt].fa) {
+        rt = nd[rt].fa;
+    }
+}
+
+bool xv[maxn], tv[maxn];
+bool init(int u) {
+    if (nd[u].x > 0) {
+        return tv[u] = xv[nd[u].x];
+    } else {
+        bool ll, rr;
+        switch (nd[u].x) {
+            case -1:
+                return tv[u] = (!init(nd[u].lc));
+            case -2:
+                // return tv[u] = (init(nd[u].lc) && init(nd[u].rc));
+                ll = init(nd[u].lc), rr = init(nd[u].rc);
+                return tv[u] = (ll && rr);
+            case -3:
+                // return tv[u] = (init(nd[u].lc) && init(nd[u].rc));
+                ll = init(nd[u].lc), rr = init(nd[u].rc);
+                return tv[u] = (ll || rr);
+        }
+    }
+}
+
+// (-1 = !)  (-2 = &)  (-3 = |)
+int chk[maxn];
+void init2(int u) {
+    if (nd[u].x > 0) {
+        chk[nd[u].x] = true;
+    } else {
+        if (nd[u].x == -1) {
+            init2(nd[u].lc);
+        } else if (nd[u].x == -2) {
+            if (tv[nd[u].lc]) init2(nd[u].rc);
+            if (tv[nd[u].rc]) init2(nd[u].lc);
+        } else if (nd[u].x == -3) {
+            if (!tv[nd[u].lc]) init2(nd[u].rc);
+            if (!tv[nd[u].rc]) init2(nd[u].lc);
+        }
+    }
+}
+
 int main() {
     #ifdef LOCAL
         freopen(".in", "r", stdin);
@@ -56,4 +132,18 @@ int main() {
     #endif
     
     int n = input();
+    bt();
+    for (int i = 1; i <= n; i++) {
+        read(xv[i]);
+    }
+    init(rt);
+    init2(rt);
+    int T;
+    read(T);
+    while (T--) {
+        int c;
+        read(c);
+        writeln(tv[rt] ^ chk[c]);
+    }
+    return 0;
 }

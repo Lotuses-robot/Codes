@@ -1,5 +1,4 @@
 // Copyright 2023 Lotuses
-#include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <vector>
@@ -25,17 +24,59 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #define debug(arg, args...) {}
 #endif
 
-double T(int n) {
-    if (n <= 1) return 1;
-    return 4 * T(n / 2) + n * n;
+#define int long long
+
+const int maxn = 2e7 + 10;
+char s[maxn * 2], s1[maxn];
+int n, Z[maxn * 2];
+
+void initZ() {
+    int l = 0, r = 0;
+    Z[0] = n;
+    for (int i = 1; i < n; i++) {
+        Z[i] = 0;
+        if (i > r) {
+            while (i + Z[i] < n && s[i + Z[i]] == s[Z[i]]) Z[i]++;
+        } else {
+            if (i + Z[i - l] > r) {
+                Z[i] = r - i + 1;
+                while (i + Z[i] < n && s[i + Z[i]] == s[Z[i]]) Z[i]++;
+            } else {
+                Z[i] = Z[i - l];
+            }
+        }
+        if (i + Z[i] - 1 > r) {
+            l = i; r = i + Z[i] - 1;
+        }
+    }
 }
 
-int main() {
+signed main() {
     #ifdef LOCAL
         freopen(".in", "r", stdin);
         freopen(".out", "w", stdout);
     #endif
     
-    double s = 0;
-    for (int i = 1; i <= 10000; i++) printf("%.10lf\n", T(i));
+    scanf("%s", s1);
+    scanf("%s", s);
+    n = strlen(s);
+    initZ();
+    int sz = 0;
+    for (int i = 0; i < n; i++) {
+        sz ^= (i + 1) * (Z[i] + 1);
+    }
+    writeln(sz);
+
+    s[strlen(s)] = '$';
+    strcpy(s + strlen(s), s1);
+    int nn = n; n = strlen(s);
+
+    initZ();
+    int bz = 0;
+    for (int i = nn + 1, end = strlen(s); i < end; i++) {
+        bz ^= (i - nn) * (Z[i] + 1);
+    }
+
+    writeln(bz);
+    return 0;
 }
