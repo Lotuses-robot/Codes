@@ -1,131 +1,119 @@
+// Copyright 2023 Lotuses
 #include <cstdio>
 #include <cstring>
 #include <vector>
+#include <string>
+#include <algorithm>
 
-#define gc getchar()
 template<typename T>
-void read(T &r) {
-    r = 0; static char ch, last;
-    ch = gc, last = 'z';
-    while (ch < '0' || ch > '9') last = ch, ch = gc;
-    while (ch >= '0' && ch <= '9') r = (r << 1) + (r << 3) + (ch ^ 48), ch = gc;
-    r = (last == '-') ? -r : r;
-}
-
+void read(T &r) { r = 0; static char ch, last; ch = getchar(), last = 'z'; while (ch < '0' || ch > '9') last = ch, ch = getchar(); while (ch >= '0' && ch <= '9') r = (r << 1) + (r << 3) + (ch ^ 48), ch = getchar(); r = (last == '-') ? -r : r; }
 template<typename T, typename...Ts>
-void read(T &arg, Ts&...arg_left) {
-    read(arg);
-    read(arg_left...);
-}
+void read(T &arg, Ts&...arg_left) { read(arg); read(arg_left...); }
 
-int a[1014514];
-int n;
+template<typename T>
+void write(T x) { if (x < 0) putchar('-'), x = -x; int len = 0; static char ch[100]; while (x) ch[++len] = x % 10 + '0', x /= 10; if (!len) ch[++len] = '0'; while (len) putchar(ch[len--]); }
+template<typename T, typename...Ts>
+void write(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...); }
+template<typename T>
+void writeln(T x) { write(x); putchar('\n'); }
+template<typename T, typename...Ts>
+void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...); putchar('\n'); }
 
-// false -> L      true -> R
-bool ans[1014514];
-bool ansre[1014514];
+// #define __DEBUG
+#ifdef __DEBUG
+#define debug(arg, args...) { printf("d <%d> ", __LINE__); writeln(arg, ##args); }
+#else
+#define debug(arg, args...) {}
+#endif
 
-// type is false -> from the left
-bool calc(bool type) {
-    int ll = 0, rr = n - 1, fstch, step = 0;
-    if (!type) { // -> left
-        fstch = a[0];
-        ll = 1;
-        ans[step] = false;
-        ansre[step] = false;
-    } else {
-        fstch = a[n - 1];
-        rr = n - 2;
-        ans[step] = true;
-        ansre[step] = false;
-    }
-
-    int mid;
-    for (int i = ll; i <= rr; i++) {
-        if (a[i] == fstch) {
-            mid = i;
-            break;
+const int maxn = 2e6 + 10;
+int n, a[maxn];
+std::vector<std::string> ans;
+bool solve(int mid) {
+    // writeln(mid);
+    std::string ft = "", ed = "";
+    int h1 = 1, t1 = mid, h2 = n, t2 = mid + 1;
+    while (h1 <= t1 && h2 >= t2) {
+        // writeln(h1, t1, h2, t2);
+        if (a[h1] == a[t1] && h1 != t1) {
+            ft += 'L'; ed += 'L';
+            h1++; t1--;
+        } else if (a[h1] == a[t2]) {
+            ft += 'L'; ed += 'R';
+            h1++; t2++;
+        } else if (a[h2] == a[t1]) {
+            ft += 'R'; ed += 'L';
+            h2--; t1--;
+        } else if (a[h2] == a[t2] && h2 != t2) {
+            ft += 'R'; ed += 'R';
+            h2--; t2++;
+        } else {
+            return false;
         }
     }
-
-    int lr = mid - 1, rl = mid + 1;
-
-    while (ll <= lr || rl <= rr) {
-        step++;
-        if (ll <= lr && rl <= rr) {
-            if (a[ll] == a[lr] && ll != lr) {
-                ll++; lr--;
-                ans[step] = false;
-                ansre[step] = false;
-            } else if (a[ll] == a[rl]) {
-                ll++; rl++;
-                ans[step] = false;
-                ansre[step] = true;
-            } else if (a[rr] == a[lr]) {
-                rr--; lr--;
-                ans[step] = true;
-                ansre[step] = false;
-            } else if (a[rr] == a[rl] && rr != rl) {
-                rr--; rl++;
-                ans[step] = true;
-                ansre[step] = true;
-            } else {
-                return false;
-            }
-        } else if (ll <= lr) {
-            if (a[ll] == a[lr]) {
-                ll++; lr--;
-                ans[step] = false;
-                ansre[step] = false;
-            } else {
-                return false;
-            }
-        } else if (rl <= rr) {
-            if (a[rl] == a[rr]) {
-                rl++; rr--;
-                ans[step] = true;
-                ansre[step] = true;
-            } else {
-                return false;
-            }
+    // puts("??");
+    while (h1 <= t1) {
+        // writeln(h1, t1, h2, t2);
+        if (a[h1] == a[t1]) {
+            ft += 'L'; ed += 'L';
+            h1++; t1--;
+        } else {
+            return false;
         }
     }
+    while (h2 >= t2) {
+        // writeln(h1, t1, h2, t2);
+        if (a[h2] == a[t2]) {
+            ft += 'R'; ed += 'R';
+            h2--; t2++;
+        } else {
+            return false;
+        }
+    }
+    // printf("%s %s\n", ft.c_str(), ed.c_str());
+    std::reverse(ed.begin(), ed.end());
+    ans.push_back(ft + ed);
     return true;
 }
 
-void out() {
-    for (int i = 0; i < n / 2; i++) {
-        putchar(ans[i] ? 'R' : 'L');
-    }
-    for (int i = n / 2 - 1; i >= 0; i--) {
-        putchar(ansre[i] ? 'R' : 'L');
-    }
-    puts("");
-}
-
 int main() {
-    freopen("data/P7915_1.in", "r", stdin);
-    freopen("P7915.out", "w", stdout);
-
+    #ifdef LOCAL
+        freopen(".in", "r", stdin);
+        freopen(".out", "w", stdout);
+    #endif
+    
     int T;
     read(T);
-
     while (T--) {
-        read(n); n *= 2;
-        for (int i = 0; i < n; i++) read(a[i]);
-
-        // if (T == 2) {
-        //     puts("fk5");
-        // }
-
-        if (calc(false)) {
-            out();
-        } else if (calc(true)) {
-            out();
-        } else {
+        ans.clear();
+        read(n);
+        n <<= 1;
+        for (int i = 1; i <= n; i++) {
+            read(a[i]);
+        }
+        if (n == 2) {
+            puts("LL");
+            continue;
+        }
+        for (int i = 2; i < n; i++) {
+            if (a[i] == a[1]) {
+                solve(i);
+                solve(i + 1);
+            }
+            if (a[i] == a[n]) {
+                solve(i);
+                solve(i + 1);
+            }
+            // solve(i);
+        }
+        solve(0);
+        solve(n);
+        if (ans.empty()) {
             puts("-1");
+        } else {
+            std::sort(ans.begin(), ans.end());
+            printf("%s\n", (*ans.begin()).c_str());
         }
     }
-
     return 0;
 }
