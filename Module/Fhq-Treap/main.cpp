@@ -4,7 +4,7 @@
 #include <ctime>
 #include <cstdlib>
 
-#define MAXN 114514
+#define maxn 114514
 template<typename T>
 struct Fhq_Treap {
     struct TreeNode {

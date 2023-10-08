@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <queue>
 
-#define MAXN 1145141
+#define maxn 1145141
 template<typename T>
 struct Splay {
     struct TreeNode {

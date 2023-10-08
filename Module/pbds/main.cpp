@@ -1,41 +1,31 @@
-#include <cstdio>
+#include <iostream>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
-
-struct Node {
-    int id, val, tm;
-    bool operator < (const Node b) const {
-        if (val != b.val) return val < b.val;
-        return tm < b.tm;
-    }
-};
-
-__gnu_pbds::tree<Node, __gnu_pbds::null_type, std::less<Node>, __gnu_pbds::rb_tree_tag, __gnu_pbds::tree_order_statistics_node_update> tr;
-
+using namespace std;
+using namespace __gnu_pbds;
+tree<pair<int, int>, null_type, less<pair<int, int> >, rb_tree_tag, tree_order_statistics_node_update> T;
 int main() {
-    int opt, tm = 0;
-    while (scanf("%d", &opt) != EOF && opt) {
-        ++tm;
-        if (opt == 1) {
-            int x, y;
-            scanf("%d%d", &x, &y);
-            tr.insert({x, y, tm});
-        } else if (opt == 2) {
-            if (!tr.size()) {
-                puts("0");
-                continue;
-            }
-            auto p = tr.rbegin();
-            printf("%d\n", p -> id);
-            tr.erase(p);
-        } else if (opt == 3) {
-            if (!tr.size()) {
-                puts("0");
-                continue;
-            }
-            auto p = tr.begin();
-            printf("%d\n", p -> id);
-            tr.erase(p);
-        }
+    ios::sync_with_stdio(0);
+    int n;
+    scanf("%d", &n);
+    int lastans = 0;
+    for (int i = 1; i <= n; i++) {
+        int oper, x;
+        scanf("%d%d", &oper, &x);
+        lastans = -1e9;
+        if (oper == 1)
+            T.insert(make_pair(x, i));
+        if (oper == 2)
+            T.erase(T.lower_bound(make_pair(x, 0)));
+        if (oper == 3)
+            lastans = T.order_of_key(make_pair(x, 0)) + 1;
+        if (oper == 4)
+            lastans = T.find_by_order(x - 1) -> first;
+        if (oper == 5)
+            lastans = T.find_by_order(T.order_of_key(make_pair(x, 0)) - 1) -> first;
+        if (oper == 6)
+            lastans = T.find_by_order(T.order_of_key(make_pair(x, 0x7fffffff))) -> first;
+        if (lastans != -1e9) printf("%d\n", lastans);
     }
+    return 0;
 }
