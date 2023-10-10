@@ -1,0 +1,11 @@
+2
+5
+push 998244353998244353
+query
+size
+pop
+query
+3
+pop
+query
+size
