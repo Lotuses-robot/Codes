@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
+#include <algorithm>
 
 template<typename T>
 void read(T &r) { r = 0; static char ch, last; ch = getchar(), last = 'z'; while (ch < '0' || ch > '9') last = ch, ch = getchar(); while (ch >= '0' && ch <= '9') r = (r << 1) + (r << 3) + (ch ^ 48), ch = getchar(); r = (last == '-') ? -r : r; }
@@ -31,4 +32,26 @@ tsz main() {
         freopen(".out", "w", stdout);
     #endif
     
+    int T;
+    read(T);
+    while (T--) {
+        std::vector<int> v;
+        int a, b, c;
+        read(a, b, c);
+        v.push_back(a);
+        v.push_back(b);
+        v.push_back(c);
+        std::sort(v.begin(), v.end());
+        for (int i = 1; i <= 3; i++) {
+            int mx = v.back(), mn = v.front();
+            if (mx == mn) break;
+            v.pop_back();
+            v.push_back(mn);
+            v.push_back(mx - mn);
+            std::sort(v.begin(), v.end());
+        }
+        if (v.back() != v.front()) puts("No");
+        else puts("Yes");
+    }
+    return 0;
 }
