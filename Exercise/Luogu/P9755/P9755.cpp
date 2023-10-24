@@ -102,22 +102,27 @@ bool checkall(int ti) {
 		vis[i] = 0;
 	}
 	std::sort(q.begin(), q.end());
-	int ct = 0; // , i = 0;
-	// while (i < q.size()) {
-		// Point p = q[i]; i++;
-		// int u = p.id;
-		// while ((~u) && (!vis[u])) {
-		// 	ct++; vis[u] = true;
-		// 	u = fa[u];
-		// }
-		// if (ct > p.x) {
-		// 	return false;
-		// }
-		// while (i < q.size() && vis[q[i].id]) i++;
-	// }
-	for (int i = 0, len = q.size(); i < len; i++) {
-		
+	int ct = 0, i = 0;
+	while (i < q.size()) {
+		Point p = q[i]; i++;
+		int u = p.id;
+		while ((~u) && (!vis[u])) {
+			ct++; vis[u] = true;
+			u = fa[u];
+		}
+		if (ct > p.x) {
+			return false;
+		}
+		while (i < q.size() && vis[q[i].id]) i++;
 	}
+	// for (int i = 0, len = q.size(); i < len; i++) {
+	// 	int u = q[i].id;
+	// 	while (~u && !vis[u]) {
+	// 		ct++; vis[u] = true;
+	// 		u = fa[u];
+	// 	}
+		
+	// }
 	return true;
 }
 
