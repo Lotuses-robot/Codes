@@ -1,8 +1,17 @@
 // Copyright 2023 Lotuses
-#include <cmath>
+#define tsz signed
 #include <cstdio>
 #include <cstring>
 #include <vector>
+// #include <map>
+// #include <set>
+// #include <list>
+// #include <queue>
+// #include <stack>
+// #include <string>
+// #include <algorithm>
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
 
 template<typename T>
 void read(T &r) { r = 0; static char ch, last; ch = getchar(), last = 'z'; while (ch < '0' || ch > '9') last = ch, ch = getchar(); while (ch >= '0' && ch <= '9') r = (r << 1) + (r << 3) + (ch ^ 48), ch = getchar(); r = (last == '-') ? -r : r; }
@@ -24,18 +33,12 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #else
 #define debug(arg, args...) {}
 #endif
+#define ins(a, b) (G[a].emplace_back(b))
 
-double T(int n) {
-    if (n <= 1) return 1;
-    return 4 * T(n / 2) + n * n;
-}
-
-int main() {
+tsz main() {
     #ifdef LOCAL
         freopen(".in", "r", stdin);
         freopen(".out", "w", stdout);
     #endif
     
-    double s = 0;
-    for (int i = 1; i <= 10000; i++) printf("%.10lf\n", T(i));
 }
