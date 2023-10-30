@@ -5,12 +5,11 @@
 #include <vector>
 // #include <map>
 // #include <set>
-// #include <list>
+// #include <forward_list>
 // #include <queue>
 // #include <stack>
-#include <string>
-#include <iostream>
-// #include <algorithm>
+// #include <string>
+#include <algorithm>
 // #include <ext/pb_ds/assoc_container.hpp>
 // #include <ext/pb_ds/tree_policy.hpp>
 
@@ -36,42 +35,52 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #endif
 #define ins(a, b) (G[a].emplace_back(b))
 
-using namespace std;
-const int maxn = 1e6 + 10;
-string s, p, t;
-int k[maxn];
-
-int solve() {
-    int len = s.length(), p = 0;
-    k[0] = 0;
-    for (int j = 1; j < len; j++) {
-        p = k[j - 1];
-        while (p && s[j] != s[p]) p = k[p - 1];
-        if (s[j] == s[p]) p++;
-        k[j] = p;
+const int maxn = 1e5 + 10;
+struct Node {
+    int x, id;
+    bool operator < (const Node &b) const {
+        return x < b.x;
     }
-    return p;
-}
+};
+Node st[maxn << 2]; int top = -1;
+int a[maxn << 2], ans[maxn << 2];
 
 tsz main() {
     #ifdef LOCAL
         freopen(".in", "r", stdin);
         freopen(".out", "w", stdout);
     #endif
-    
-    int n;
-    read(n); n--;
-    cin >> t;
+
+    int n, max = -1;
+    read(n);
     for (int i = 1; i <= n; i++) {
-        cin >> p;
-        int len = std::min(p.length(), t.length());
-        // puts("?");
-        s.clear();
-        s = p.substr(0, len) + "$" + t.substr(t.length() - len);
-        int pos = solve();
-        t += p.substr(pos);
-        // cout << t << endl;
+        read(a[i]);
+        a[i + 2 * n] = a[i + n] = a[i];
     }
-    cout << t << endl;
+    for (int i = 2 * n; i >= n + 1; i--) {
+        while (~top && st[top].x >= a[i] * 2) top--;
+        st[++top] = {a[i] * 2, i + 2 * n};
+    }
+    
+    ans[3 * n + 1] = 1e9;
+    for (int i = 3 * n; i >= 1; i--) {
+        int j = std::lower_bound(st, st + top, (Node){a[i], 0}) - st;
+        if (st[j].x >= a[i]) j--;
+        ans[i] = ans[i + 1];
+        if (j >= 0) {
+            ans[i] = std::min(ans[i], st[j].id);
+        }
+        while (~top && st[top].x >= a[i] * 2) top--;
+        st[++top] = {a[i] * 2, i};
+    }
+    for (int i = 1; i <= n; i++) {
+        if (ans[i] - i >= 2 * n) {
+            write(-1);
+        } else {
+            write(ans[i] - i);
+        }
+        putchar(' ');
+    }
+    puts("");
     return 0;
 }

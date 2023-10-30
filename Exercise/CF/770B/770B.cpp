@@ -8,8 +8,7 @@
 // #include <list>
 // #include <queue>
 // #include <stack>
-#include <string>
-#include <iostream>
+// #include <string>
 // #include <algorithm>
 // #include <ext/pb_ds/assoc_container.hpp>
 // #include <ext/pb_ds/tree_policy.hpp>
@@ -36,22 +35,8 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #endif
 #define ins(a, b) (G[a].emplace_back(b))
 
-using namespace std;
-const int maxn = 1e6 + 10;
-string s, p, t;
-int k[maxn];
-
-int solve() {
-    int len = s.length(), p = 0;
-    k[0] = 0;
-    for (int j = 1; j < len; j++) {
-        p = k[j - 1];
-        while (p && s[j] != s[p]) p = k[p - 1];
-        if (s[j] == s[p]) p++;
-        k[j] = p;
-    }
-    return p;
-}
+const int maxn = 1e5 + 10;
+char ch[maxn];
 
 tsz main() {
     #ifdef LOCAL
@@ -59,19 +44,36 @@ tsz main() {
         freopen(".out", "w", stdout);
     #endif
     
-    int n;
-    read(n); n--;
-    cin >> t;
-    for (int i = 1; i <= n; i++) {
-        cin >> p;
-        int len = std::min(p.length(), t.length());
-        // puts("?");
-        s.clear();
-        s = p.substr(0, len) + "$" + t.substr(t.length() - len);
-        int pos = solve();
-        t += p.substr(pos);
-        // cout << t << endl;
+    scanf("%s", ch);
+    int len = strlen(ch), ans = 0, ans1;
+    if (len == 1) {
+        printf("%s\n", ch);
+        return 0;
     }
-    cout << t << endl;
+    for (int i = 0; i < len; i++) {
+        ans += ch[i] - '0';
+    }
+    ans1 = ch[0] - '0' - 1;
+    for (int i = 1; i < len; i++) {
+        ans1 += 9;
+    }
+    if (ans >= ans1) {
+        printf("%s\n", ch);
+    } else {
+        int i = 1;
+        for (i = 1; i < len; i++) {
+            if (ch[i] != '9') break;
+        }
+        i--;
+        ch[i]--;
+        for (int j = i + 1; j < len; j++) {
+            ch[j] = '9';
+        }
+        if (ch[0] == '0') {
+            printf("%s\n", ch + 1);
+        } else {
+            printf("%s\n", ch);
+        }
+    }
     return 0;
 }
