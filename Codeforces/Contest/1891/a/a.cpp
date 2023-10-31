@@ -41,5 +41,25 @@ tsz main() {
         freopen(".out", "w", stdout);
     #endif
     
-    puts("YeS\nYes\nNO\nno\nYES\n");
+    int T;
+    read(T);
+    while (T--) {
+        int n, nxt = 1, a, last = -1;
+        bool flag = false;
+        read(n);
+        for (int i = 1; i <= n; i++) {
+            read(a);
+            if (a < last) {
+                flag = true;
+            }
+            if (i == nxt) {
+                last = -1;
+                nxt <<= 1;
+            } else {
+                last = a;
+            }
+        }
+        puts(flag ? "NO" : "YES");
+    }
+    return 0;
 }

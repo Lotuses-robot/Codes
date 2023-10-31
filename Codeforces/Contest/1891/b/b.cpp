@@ -3,8 +3,9 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
-// #include <map>
+#include <map>
 // #include <set>
+#include <bitset>
 // #include <list>
 // #include <queue>
 // #include <stack>
@@ -35,11 +36,51 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #endif
 #define ins(a, b) (G[a].emplace_back(b))
 
+const int maxn = 1e5 + 10;
+int a[maxn];
+
+std::map<int, std::vector<int> > s;
+std::vector<int> v;
+
 tsz main() {
     #ifdef LOCAL
-        freopen(".in", "r", stdin);
-        freopen(".out", "w", stdout);
+        freopen("in1.txt", "r", stdin);
+        // freopen(".out", "w", stdout);
     #endif
     
-    puts("YeS\nYes\nNO\nno\nYES\n");
+    int T;
+    read(T);
+    while (T--) {
+        s.clear();
+        int n, q, x, max = -1;
+        read(n, q);
+        for (int i = 1; i <= n; i++) {
+            read(a[i]);
+            s[a[i] & (-a[i])].push_back(i);
+            max = std::max(max, a[i] & (-a[i]));
+        }
+        for (int i = 1; i <= q; i++) {
+            read(x);
+            auto p = s.lower_bound(1 << x); v.clear();
+            while (p != s.end() && p -> first <= max) {
+                for (int j : p -> second) {
+                    // s[1 << x - 1].push_back(j);
+                    v.push_back(j);
+                    // writeln(p -> id, a[p -> id]);
+                    a[j] |= (1 << (x - 1));
+                    // writeln(j, a[j]);
+                }
+                p++;
+            }
+            for (auto j : v) {
+                s[1 << x - 1].push_back(j);
+            }
+            max = std::min(max, 1 << x - 1);
+        }
+        for (int i = 1; i <= n; i++) {
+            write(a[i]); putchar(' ');
+        }
+        puts("");
+    }
+    return 0;
 }

@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
+#include <bitset>
 // #include <map>
 // #include <set>
 // #include <list>
@@ -35,11 +36,69 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #endif
 #define ins(a, b) (G[a].emplace_back(b))
 
+#define int unsigned long long
+
+int f[128][128];
+std::bitset<128> b;
+
+int dfs(int u, int ct, bool ful) {
+    if (ct >= 128 || u >= 128) return 0;
+    if (!ful && ~f[u][ct]) return f[u][ct];
+    int ans = 0, lmt = 2;
+    if (u == 0) {
+        if (ful) ans = ct <= b.test(u);
+        else ans = ct <= 1;
+        // ans = ct <= ;
+        goto ret;
+    }
+    if (ful) {
+        ans += dfs(u - 1, ct - b.test(u), true);
+        lmt = b.test(u);
+    }
+    for (int i = 0; i < lmt; i++) {
+        ans += dfs(u - 1, ct - i, false);
+    }
+    ret: if (!ful) f[u][ct] = ans;
+    return ans;
+}
+
+int getans(int x, int k) {
+    memset(f, -1, sizeof(f));
+    b = x;
+    return dfs(63, k, true);    
+}
+
+int calc(int n, int k) {
+    // [n + 1, 2 * n]
+    // writeln(getans(2 * n, k), getans(n, k));
+    return getans(2 * n, k) - getans(n, k);
+}
+
+int m, k;
+bool check(int x) {
+    // writeln(x, k, calc(x, k));
+    return calc(x, k) >= m;
+}
+
 tsz main() {
     #ifdef LOCAL
-        freopen(".in", "r", stdin);
-        freopen(".out", "w", stdout);
+        // freopen(".in", "r", stdin);
+        // freopen(".out", "w", stdout);
     #endif
     
-    puts("YeS\nYes\nNO\nno\nYES\n");
+    // writeln(calc(5, 3));
+
+    read(m, k);
+    int l = 1, r = 1e18;
+    while (l < r) {
+        int mid = (l + r) >> 1;
+        if (check(mid)) {
+            r = mid;
+        } else {
+            l = mid + 1;
+        }
+        // writeln(l, r);
+    }
+    writeln(r);
+    return 0;
 }

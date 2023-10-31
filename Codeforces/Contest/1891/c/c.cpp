@@ -9,7 +9,7 @@
 // #include <queue>
 // #include <stack>
 // #include <string>
-// #include <algorithm>
+#include <algorithm>
 // #include <ext/pb_ds/assoc_container.hpp>
 // #include <ext/pb_ds/tree_policy.hpp>
 
@@ -35,11 +35,36 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #endif
 #define ins(a, b) (G[a].emplace_back(b))
 
+#define int long long
+
+const int maxn = 2e5 + 10;
+int a[maxn];
+
 tsz main() {
     #ifdef LOCAL
         freopen(".in", "r", stdin);
         freopen(".out", "w", stdout);
     #endif
     
-    puts("YeS\nYes\nNO\nno\nYES\n");
+    int T;
+    read(T);
+    while (T--) {
+        int n, sum = 0, ans = 0;
+        read(n);
+        for (int i = 1; i <= n; i++) {
+            read(a[i]); sum += a[i];
+        }
+        std::sort(a + 1, a + n + 1);
+        sum = sum / 2 + sum % 2; ans = sum;
+        for (int i = 1; i <= n; i++) {
+            if (a[i] <= sum) {
+                sum -= a[i];
+            } else {
+                ans += (n - i + 1);
+                break;
+            }
+        }
+        writeln(ans);
+    }
+    return 0;
 }

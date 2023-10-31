@@ -41,5 +41,4 @@ tsz main() {
         freopen(".out", "w", stdout);
     #endif
     
-    puts("YeS\nYes\nNO\nno\nYES\n");
 }

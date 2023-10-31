@@ -9,7 +9,7 @@
 // #include <queue>
 // #include <stack>
 // #include <string>
-// #include <algorithm>
+#include <algorithm>
 // #include <ext/pb_ds/assoc_container.hpp>
 // #include <ext/pb_ds/tree_policy.hpp>
 
@@ -35,11 +35,53 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #endif
 #define ins(a, b) (G[a].emplace_back(b))
 
+#define int unsigned long long
+
+const int mod = 1e9 + 7;
+int cnt[128];
+int powx[128][128];
+
+int log(int x, int y, bool up = false) {
+    int cnt = 0;
+    while (y >= x) y /= x, cnt++;
+    if (up && y > 0) {
+        cnt++;
+    }
+    return cnt;
+}
+
 tsz main() {
     #ifdef LOCAL
-        freopen(".in", "r", stdin);
-        freopen(".out", "w", stdout);
+        // freopen(".in", "r", stdin);
+        // freopen(".out", "w", stdout);
     #endif
     
-    puts("YeS\nYes\nNO\nno\nYES\n");
+    for (int i = 2; i <= 63; i++) {
+        powx[i][0] = 1; cnt[i] = 1;
+        for (int &j = cnt[i]; 1.0 * powx[i][j - 1] * i <= 1e18; j++) {
+            powx[i][j] = powx[i][j - 1] * i;
+        }
+        powx[i][cnt[i]] = powx[i][cnt[i] - 1] * i;
+        cnt[i]++;
+    }
+
+    int T;
+    read(T);
+    while (T--) {
+        int l, r, ans = 0, id;
+        read(l, r); id = log(2, l);
+        for (int a = l, b; a <= r; a++, id++) {
+            b = std::min(r, powx[2][id + 1] - 1);
+            int idx = log(id, a);
+            for (int _l = a, _r; _l <= b; _l++, idx++) {
+                _r = std::min(b, powx[id][idx + 1] - 1);
+                ans += (_r - _l + 1) % mod * idx % mod;
+                ans %= mod;
+                _l = _r;
+            }
+            a = b;
+        }
+        writeln(ans);
+    }
+    return 0;
 }
