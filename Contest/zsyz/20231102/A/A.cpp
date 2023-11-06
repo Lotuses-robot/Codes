@@ -1,6 +1,8 @@
 // Copyright 2023 Lotuses
 #define tsz signed
 #include <cstdio>
+#include <ctime>
+#include <cstdlib>
 #include <cstring>
 #include <vector>
 // #include <map>
@@ -37,44 +39,53 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 
 const int maxn = 5e5 + 10;
 int n;
-int ans[maxn];
-std::vector<int> G[maxn];
-struct Event {
-    int x, lmt;
-};
-std::vector<Event> e[maxn];
-void init(int n) {
-    for (int i = 1; i <= n; i++) {
-        G[i].clear();
+struct Node {
+    int x, y, z;
+} p[maxn][2];
+
+#define min(a, b) ((a) > (b) ? (b) : (a))
+#define max(a, b) ((a) > (b) ? (a) : (b))
+
+int tm, ans = 0;
+
+void upd() {
+    static int maxx, maxy, maxz; maxx = maxy = maxz = 0;
+    static int minx, miny, minz; minx = miny = minz = 1e9 + 1;
+    for (register int i = 1; i <= n; i++) {
+        static int x;
+        x = rand() & 1;
+        minx = min(minx, p[i][x].x);
+        maxx = max(maxx, p[i][x].x);
+        miny = min(miny, p[i][x].y);
+        maxy = max(maxy, p[i][x].y);
+        minz = min(minz, p[i][x].z);
+        maxz = max(maxz, p[i][x].z);
     }
+    ans = min(ans, max(max(maxx - minx, maxy - miny), maxz - minz));
 }
 
-
-void dfs()
-
 tsz main() {
-    #ifdef LOCAL
-        freopen(".in", "r", stdin);
-        freopen(".out", "w", stdout);
-    #endif
+    freopen("A.in", "r", stdin);
+    freopen("A.out", "w", stdout);
     
-    int T;
-    read(T);
+    srand(time(NULL));
+
+    register int T, bg, now;
+    read(T); tm = 2900 / T - 10;
     while (T--) {
-        int q;
-        read(q);
+        read(n);
         for (int i = 1; i <= n; i++) {
-            static int op, x, y;
-            read(op, x);
-            if (op == 1) {
-                ins(x, ++n);
-            } else {
-                read(y);
-                e[x].emplace_back((Event){y, n});
-            }
+            read(p[i][0].x, p[i][0].y, p[i][0].z);
+            read(p[i][1].x, p[i][1].y, p[i][1].z);
         }
-        memset(ans, 0, sizeof(int) * (n + 5));
-        dfs()
-        init();
+        bg = clock(); now = clock(); ans = 2e9;
+        while (now - bg <= tm) {
+            for (int i = 1; i <= 5; i++) {
+                upd();
+            }
+            now = clock();
+        }
+        writeln(ans);
     }
+    return 0;
 }

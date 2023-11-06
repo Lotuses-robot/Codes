@@ -6,7 +6,7 @@
 // #include <map>
 // #include <set>
 // #include <list>
-// #include <queue>
+#include <queue>
 // #include <stack>
 // #include <string>
 // #include <algorithm>
@@ -35,46 +35,41 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #endif
 #define ins(a, b) (G[a].emplace_back(b))
 
-const int maxn = 5e5 + 10;
-int n;
-int ans[maxn];
-std::vector<int> G[maxn];
-struct Event {
-    int x, lmt;
-};
-std::vector<Event> e[maxn];
-void init(int n) {
-    for (int i = 1; i <= n; i++) {
-        G[i].clear();
+#define int long long
+
+const int maxn = 1e5 + 10;
+struct Node {
+    int a, b;
+    bool operator < (const Node &y) const {
+        return a + b < y.a + y.b;
     }
-}
-
-
-void dfs()
+};
+std::priority_queue<Node> q;
 
 tsz main() {
-    #ifdef LOCAL
-        freopen(".in", "r", stdin);
-        freopen(".out", "w", stdout);
-    #endif
+    freopen("C.in", "r", stdin);
+    freopen("C.out", "w", stdout);
     
     int T;
     read(T);
     while (T--) {
-        int q;
-        read(q);
+        int n, a, b;
+        read(n);
         for (int i = 1; i <= n; i++) {
-            static int op, x, y;
-            read(op, x);
-            if (op == 1) {
-                ins(x, ++n);
-            } else {
-                read(y);
-                e[x].emplace_back((Event){y, n});
-            }
+            read(a, b);
+            q.push({a, b});
         }
-        memset(ans, 0, sizeof(int) * (n + 5));
-        dfs()
-        init();
+        int ans = 0, st = 1;
+        while (!q.empty()) {
+            if (st > 0) {
+                ans += q.top().a;
+            } else {
+                ans -= q.top().b;
+            }
+            q.pop();
+            st = -st;
+        }
+        writeln(ans);
     }
+    return 0;
 }

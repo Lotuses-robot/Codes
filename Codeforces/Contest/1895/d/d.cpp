@@ -3,8 +3,9 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
+#include <bitset>
 // #include <map>
-// #include <set>
+#include <set>
 // #include <list>
 // #include <queue>
 // #include <stack>
@@ -35,22 +36,9 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #endif
 #define ins(a, b) (G[a].emplace_back(b))
 
-const int maxn = 5e5 + 10;
-int n;
-int ans[maxn];
-std::vector<int> G[maxn];
-struct Event {
-    int x, lmt;
-};
-std::vector<Event> e[maxn];
-void init(int n) {
-    for (int i = 1; i <= n; i++) {
-        G[i].clear();
-    }
-}
-
-
-void dfs()
+const int maxn = 2e5 + 10;
+int a[maxn], n;
+std::set<std::pair<int, int> > s;
 
 tsz main() {
     #ifdef LOCAL
@@ -58,23 +46,33 @@ tsz main() {
         freopen(".out", "w", stdout);
     #endif
     
-    int T;
-    read(T);
-    while (T--) {
-        int q;
-        read(q);
-        for (int i = 1; i <= n; i++) {
-            static int op, x, y;
-            read(op, x);
-            if (op == 1) {
-                ins(x, ++n);
-            } else {
-                read(y);
-                e[x].emplace_back((Event){y, n});
-            }
-        }
-        memset(ans, 0, sizeof(int) * (n + 5));
-        dfs()
-        init();
+    read(n);
+    for (int i = 1; i < n; i++) {
+        read(a[i]); a[i] ^= a[i - 1];
     }
+    for (int i = 0; i < n; i++) {
+        std::bitset<30> prefix = 0;
+        for (int x = 29; x >= 0; x--) {
+            int ax = (a[i] >> x) & 1, nx = (n - 1 >> x) & 1;
+            if (!nx) {
+                int b = prefix.to_ulong() + ((ax ^ 1) << x);
+                int e = prefix.to_ulong() + ((ax ^ 1) << x) + (1 << x) - 1;
+                s.insert(std::make_pair(b, e));
+            }
+            prefix.set(x, ax ^ nx);
+        }
+    }
+    int howend = -1, ret;
+    for (auto p : s) {
+        if (p.first > howend + 1) {
+            ret = howend + 1;
+            break;
+        }
+        howend = std::max(p.second, howend);
+    }
+    for (int i = 1; i <= n; i++) {
+        write(a[i - 1] ^ ret); putchar(' ');
+    }
+    puts("");
+    return 0;
 }

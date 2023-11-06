@@ -3,7 +3,8 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
-// #include <map>
+#include <map>
+#include <limits >
 // #include <set>
 // #include <list>
 // #include <queue>
@@ -35,22 +36,12 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #endif
 #define ins(a, b) (G[a].emplace_back(b))
 
-const int maxn = 5e5 + 10;
-int n;
-int ans[maxn];
-std::vector<int> G[maxn];
-struct Event {
-    int x, lmt;
-};
-std::vector<Event> e[maxn];
-void init(int n) {
-    for (int i = 1; i <= n; i++) {
-        G[i].clear();
-    }
-}
+#define int long long
 
-
-void dfs()
+const int maxn = 10;
+char ch[maxn];
+std::map<int, int> mp[100];
+std::map<int, int> tot[100];
 
 tsz main() {
     #ifdef LOCAL
@@ -58,23 +49,30 @@ tsz main() {
         freopen(".out", "w", stdout);
     #endif
     
-    int T;
-    read(T);
-    while (T--) {
-        int q;
-        read(q);
-        for (int i = 1; i <= n; i++) {
-            static int op, x, y;
-            read(op, x);
-            if (op == 1) {
-                ins(x, ++n);
-            } else {
-                read(y);
-                e[x].emplace_back((Event){y, n});
-            }
+    int n, len, sum = 0, sub = 0, ans = 0;
+    read(n);
+    for (int i = 1; i <= n; i++) {
+        scanf("%s", ch + 1);
+        len = strlen(ch + 1); sub = sum = 0;
+        for (int i = 1; i <= len; i++) sum += ch[i] - '0';
+
+        ans += mp[len][sum] + 1;
+        mp[len][sum] += 2;
+        for (int i = 1; i * 2 < len; i++) {
+            sub += ch[i] - '0';
+            ans += tot[len - i * 2][sum - sub * 2];
+            mp[len - i * 2][sum - sub * 2]++;
+            // writeln(len, len - i - i, sum - sub * 2, ans);
         }
-        memset(ans, 0, sizeof(int) * (n + 5));
-        dfs()
-        init();
+        sub = 0;
+        for (int i = len; (len - i + 1) * 2 < len; i--) {
+            sub += ch[i] - '0';
+            ans += tot[2 * i - len - 2][sum - sub * 2];
+            mp[2 * i - len - 2][sum - sub * 2]++;
+            // writeln(len, 2 * i - len - 2, sum - sub * 2, ans);
+        }
+        tot[len][sum]++;
     }
+    writeln(ans);
+    return 0;
 }

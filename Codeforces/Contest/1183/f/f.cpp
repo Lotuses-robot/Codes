@@ -4,7 +4,7 @@
 #include <cstring>
 #include <vector>
 // #include <map>
-// #include <set>
+#include <set>
 // #include <list>
 // #include <queue>
 // #include <stack>
@@ -35,22 +35,8 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #endif
 #define ins(a, b) (G[a].emplace_back(b))
 
-const int maxn = 5e5 + 10;
 int n;
-int ans[maxn];
-std::vector<int> G[maxn];
-struct Event {
-    int x, lmt;
-};
-std::vector<Event> e[maxn];
-void init(int n) {
-    for (int i = 1; i <= n; i++) {
-        G[i].clear();
-    }
-}
-
-
-void dfs()
+std::set<int> s, s1;
 
 tsz main() {
     #ifdef LOCAL
@@ -58,23 +44,42 @@ tsz main() {
         freopen(".out", "w", stdout);
     #endif
     
-    int T;
+    int T, x, ans, mx, mx1, ans1;
     read(T);
     while (T--) {
-        int q;
-        read(q);
+        s.clear(); s1.clear();
+        read(n);
         for (int i = 1; i <= n; i++) {
-            static int op, x, y;
-            read(op, x);
-            if (op == 1) {
-                ins(x, ++n);
-            } else {
-                read(y);
-                e[x].emplace_back((Event){y, n});
+            read(x);
+            s.insert(x);
+        }
+        // 1
+        mx = ans = *s.rbegin();
+        // 2
+        for (int x : s) {
+            if (mx % x) {
+                ans = std::max(ans, mx + x);
             }
         }
-        memset(ans, 0, sizeof(int) * (n + 5));
-        dfs()
-        init();
+        // 3
+        if (mx % 2 == 0 && mx % 3 == 0 && mx % 5 == 0 &&
+            s.find(mx / 2) != s.end() && s.find(mx / 3) != s.end() && s.find(mx / 5) != s.end()) {
+            ans = std::max(ans, mx / 30 * 31);
+        }
+        for (int x : s) {
+            if (mx % x) {
+                s1.insert(x);
+            }
+        }
+        if (s1.empty()) goto end;
+        ans1 = mx1 = *s1.rbegin();
+        for (int x : s1) {
+            if (mx1 % x) {
+                ans1 = std::max(ans1, x + mx1);
+            }
+        }
+        ans = std::max(ans, mx + ans1);
+        end: writeln(ans);
     }
+    return 0;
 }

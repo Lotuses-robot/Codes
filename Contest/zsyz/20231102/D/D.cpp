@@ -9,7 +9,7 @@
 // #include <queue>
 // #include <stack>
 // #include <string>
-// #include <algorithm>
+#include <algorithm>
 // #include <ext/pb_ds/assoc_container.hpp>
 // #include <ext/pb_ds/tree_policy.hpp>
 
@@ -35,46 +35,49 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #endif
 #define ins(a, b) (G[a].emplace_back(b))
 
-const int maxn = 5e5 + 10;
+#define int long long
+
+const int maxn = 5e5 + 10, mod = 998244353;
 int n;
-int ans[maxn];
-std::vector<int> G[maxn];
-struct Event {
-    int x, lmt;
-};
-std::vector<Event> e[maxn];
-void init(int n) {
-    for (int i = 1; i <= n; i++) {
-        G[i].clear();
+char ch[maxn];
+int k[maxn];
+
+void init() {
+    memset(k, 0, sizeof(int) * (n + 5));
+    k[1] = 0;
+    for (int i = 2; i <= n; i++) {
+        int &p = k[i]; p = k[i - 1];
+        while (p && ch[p + 1] != ch[i]) p = k[p];
+        if (ch[p + 1] == ch[i]) p++;
     }
 }
 
-
-void dfs()
+int f(int x) {
+    int y = k[x];
+    int ans = 0;
+    while (y) {
+        ans += std::__gcd(x, y);
+        ans %= mod;
+        y = k[y];
+    }
+    return ans;
+}
 
 tsz main() {
-    #ifdef LOCAL
-        freopen(".in", "r", stdin);
-        freopen(".out", "w", stdout);
-    #endif
+    freopen("D.in", "r", stdin);
+    freopen("D.out", "w", stdout);
     
     int T;
     read(T);
     while (T--) {
-        int q;
-        read(q);
-        for (int i = 1; i <= n; i++) {
-            static int op, x, y;
-            read(op, x);
-            if (op == 1) {
-                ins(x, ++n);
-            } else {
-                read(y);
-                e[x].emplace_back((Event){y, n});
-            }
-        }
-        memset(ans, 0, sizeof(int) * (n + 5));
-        dfs()
+        scanf("%s", ch + 1); n = strlen(ch + 1);
         init();
+        int ans = 1;
+        for (int i = 1; i <= n; i++) {
+            ans *= (f(i) + 1) % mod;
+            ans %= mod;
+        }
+        writeln(ans);
     }
+    return 0;
 }

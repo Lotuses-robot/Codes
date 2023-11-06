@@ -35,22 +35,25 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #endif
 #define ins(a, b) (G[a].emplace_back(b))
 
-const int maxn = 5e5 + 10;
-int n;
-int ans[maxn];
-std::vector<int> G[maxn];
-struct Event {
-    int x, lmt;
-};
-std::vector<Event> e[maxn];
-void init(int n) {
-    for (int i = 1; i <= n; i++) {
-        G[i].clear();
-    }
+const int maxn = 1e3 + 10;
+int f[maxn][maxn];
+
+bool check(int l, int r) {
+    if (l > r) return true;
+    return f[l][r];
 }
 
-
-void dfs()
+void dfs(int l, int r) {
+    if (l > r) return;
+    for (int i = l; i <= r; i++) {
+        if (check(l, i - 1) && check(i + 1, r)) {
+            writeln(l, r, i);
+            dfs(l, i - 1);
+            dfs(i + 1, r);
+            return;
+        }
+    }
+}
 
 tsz main() {
     #ifdef LOCAL
@@ -61,20 +64,14 @@ tsz main() {
     int T;
     read(T);
     while (T--) {
-        int q;
-        read(q);
+        int n, l, r;
+        read(n);
+        memset(f, 0, sizeof(f[0]) * (n + 3));
         for (int i = 1; i <= n; i++) {
-            static int op, x, y;
-            read(op, x);
-            if (op == 1) {
-                ins(x, ++n);
-            } else {
-                read(y);
-                e[x].emplace_back((Event){y, n});
-            }
+            read(l, r);
+            f[l][r] = 1;
         }
-        memset(ans, 0, sizeof(int) * (n + 5));
-        dfs()
-        init();
+        dfs(1, n);
     }
+    return 0;
 }

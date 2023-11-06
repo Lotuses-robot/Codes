@@ -9,7 +9,7 @@
 // #include <queue>
 // #include <stack>
 // #include <string>
-// #include <algorithm>
+#include <algorithm>
 // #include <ext/pb_ds/assoc_container.hpp>
 // #include <ext/pb_ds/tree_policy.hpp>
 
@@ -35,23 +35,6 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #endif
 #define ins(a, b) (G[a].emplace_back(b))
 
-const int maxn = 5e5 + 10;
-int n;
-int ans[maxn];
-std::vector<int> G[maxn];
-struct Event {
-    int x, lmt;
-};
-std::vector<Event> e[maxn];
-void init(int n) {
-    for (int i = 1; i <= n; i++) {
-        G[i].clear();
-    }
-}
-
-
-void dfs()
-
 tsz main() {
     #ifdef LOCAL
         freopen(".in", "r", stdin);
@@ -61,20 +44,15 @@ tsz main() {
     int T;
     read(T);
     while (T--) {
-        int q;
-        read(q);
-        for (int i = 1; i <= n; i++) {
-            static int op, x, y;
-            read(op, x);
-            if (op == 1) {
-                ins(x, ++n);
-            } else {
-                read(y);
-                e[x].emplace_back((Event){y, n});
-            }
+        int x, y, k;
+        read(x, y, k);
+        // int ans = ;
+        if (x < y) {
+            writeln(y + std::max(0, std::abs(y - x) - k));
+        } else {
+            writeln(x);
         }
-        memset(ans, 0, sizeof(int) * (n + 5));
-        dfs()
-        init();
+        // writeln(ans);
     }
+    return 0;
 }

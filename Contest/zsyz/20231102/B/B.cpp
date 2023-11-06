@@ -3,13 +3,13 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
-// #include <map>
+#include <map>
 // #include <set>
 // #include <list>
 // #include <queue>
 // #include <stack>
 // #include <string>
-// #include <algorithm>
+#include <algorithm>
 // #include <ext/pb_ds/assoc_container.hpp>
 // #include <ext/pb_ds/tree_policy.hpp>
 
@@ -35,46 +35,49 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #endif
 #define ins(a, b) (G[a].emplace_back(b))
 
-const int maxn = 5e5 + 10;
-int n;
-int ans[maxn];
-std::vector<int> G[maxn];
-struct Event {
-    int x, lmt;
-};
-std::vector<Event> e[maxn];
-void init(int n) {
-    for (int i = 1; i <= n; i++) {
-        G[i].clear();
-    }
+#define int long long
+
+const int maxn = 5e3 + 10, mod = 1e9 + 7;
+int n, a[maxn], nxt[maxn];
+int f[maxn][maxn];
+
+int dfs(int x, int y) {
+    if (y > x) return 0;
+    if (y == 0) return 1;
+    // writeln(x, y, f[x][y]);
+    if (~f[x][y]) return f[x][y];
+    return f[x][y] = (dfs(nxt[x], y) + dfs(x, y - 1)) % mod;
 }
 
-
-void dfs()
-
 tsz main() {
-    #ifdef LOCAL
-        freopen(".in", "r", stdin);
-        freopen(".out", "w", stdout);
-    #endif
+    freopen("B.in", "r", stdin);
+    freopen("B.out", "w", stdout);
     
     int T;
     read(T);
     while (T--) {
-        int q;
-        read(q);
-        for (int i = 1; i <= n; i++) {
-            static int op, x, y;
-            read(op, x);
-            if (op == 1) {
-                ins(x, ++n);
-            } else {
-                read(y);
-                e[x].emplace_back((Event){y, n});
+        read(n);
+        // memset(f, -1, sizeof(f[0]) * (n + 5));
+        for (int i = 0; i <= n + 5; i++) {
+            for (int j = 0; j <= n + 5; j++) {
+                f[i][j] = -1;
             }
         }
-        memset(ans, 0, sizeof(int) * (n + 5));
-        dfs()
-        init();
+        for (int i = 1; i <= n; i++) {
+            read(a[i]);
+        }
+        std::sort(a + 1, a + n + 1);
+        nxt[1] = -1;
+        for (int i = 2; i <= n; i++) {
+            if (a[i] == a[i - 1]) {
+                nxt[i] = nxt[i - 1];
+            } else {
+                nxt[i] = i - 1;
+            }
+        }
+        for (int k = 1; k <= n; k++) {
+            writeln(dfs(n, k));
+        }
     }
+    return 0;
 }

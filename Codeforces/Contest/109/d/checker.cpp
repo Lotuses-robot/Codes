@@ -35,46 +35,29 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #endif
 #define ins(a, b) (G[a].emplace_back(b))
 
-const int maxn = 5e5 + 10;
-int n;
-int ans[maxn];
-std::vector<int> G[maxn];
-struct Event {
-    int x, lmt;
-};
-std::vector<Event> e[maxn];
-void init(int n) {
-    for (int i = 1; i <= n; i++) {
-        G[i].clear();
-    }
-}
-
-
-void dfs()
+const int maxn = 1e5 + 10;
+int a[maxn];
 
 tsz main() {
-    #ifdef LOCAL
-        freopen(".in", "r", stdin);
-        freopen(".out", "w", stdout);
-    #endif
+    // #ifdef LOCAL
+    //     freopen(".in", "r", stdin);
+    //     freopen(".out", "w", stdout);
+    // #endif
     
-    int T;
-    read(T);
-    while (T--) {
-        int q;
-        read(q);
-        for (int i = 1; i <= n; i++) {
-            static int op, x, y;
-            read(op, x);
-            if (op == 1) {
-                ins(x, ++n);
-            } else {
-                read(y);
-                e[x].emplace_back((Event){y, n});
-            }
-        }
-        memset(ans, 0, sizeof(int) * (n + 5));
-        dfs()
-        init();
+    int n, q;
+    read(n);
+    for (int i = 1; i <= n; i++) {
+        read(a[i]);
     }
+    read(q);
+    while (q--) {
+        int x, y;
+        read(x, y);
+        std::swap(a[x], a[y]);
+    }
+    for (int i = 1; i <= n; i++) {
+        write(a[i]); putchar(' ');
+    }
+    puts("");
+    return 0;
 }

@@ -9,7 +9,7 @@
 // #include <queue>
 // #include <stack>
 // #include <string>
-// #include <algorithm>
+#include <algorithm>
 // #include <ext/pb_ds/assoc_container.hpp>
 // #include <ext/pb_ds/tree_policy.hpp>
 
@@ -35,22 +35,33 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #endif
 #define ins(a, b) (G[a].emplace_back(b))
 
-const int maxn = 5e5 + 10;
+const int maxn = 5005;
 int n;
-int ans[maxn];
-std::vector<int> G[maxn];
-struct Event {
-    int x, lmt;
-};
-std::vector<Event> e[maxn];
-void init(int n) {
+int q[maxn][maxn];
+int p[maxn];
+
+bool chk(int x) {
+    int pos = 1;
     for (int i = 1; i <= n; i++) {
-        G[i].clear();
+        if (p[i] != x) {
+            if (p[i] < x && p[i] != q[x][pos]) {
+                return false;
+            }
+            if (p[i] > x && p[i] - 1 != q[x][pos]) {
+                return false;
+            }
+            pos++;
+        }
     }
+    return true;
 }
 
-
-void dfs()
+bool check() {
+    for (int i = 1; i <= n; i++) {
+        if (!chk(i)) return false;
+    }
+    return true;
+}
 
 tsz main() {
     #ifdef LOCAL
@@ -61,20 +72,23 @@ tsz main() {
     int T;
     read(T);
     while (T--) {
-        int q;
-        read(q);
+        read(n);
         for (int i = 1; i <= n; i++) {
-            static int op, x, y;
-            read(op, x);
-            if (op == 1) {
-                ins(x, ++n);
-            } else {
-                read(y);
-                e[x].emplace_back((Event){y, n});
+            for (int j = 1; j <= n - 1; j++) {
+                read(q[i][j]);
             }
         }
-        memset(ans, 0, sizeof(int) * (n + 5));
-        dfs()
-        init();
+        for (int i = 1; i <= n; i++) {
+            p[i] = i;
+        }
+        while (true) {
+            if (check()) {
+                std::for_each(p + 1, p + n + 1, [](int x) {
+                    write(x); putchar(' ');
+                }); puts("");
+                break;
+            }
+            std::next_permutation(p + 1, p + n + 1);
+        }
     }
 }

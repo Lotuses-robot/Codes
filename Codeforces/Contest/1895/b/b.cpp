@@ -9,7 +9,7 @@
 // #include <queue>
 // #include <stack>
 // #include <string>
-// #include <algorithm>
+#include <algorithm>
 // #include <ext/pb_ds/assoc_container.hpp>
 // #include <ext/pb_ds/tree_policy.hpp>
 
@@ -35,22 +35,9 @@ void writeln(T arg, Ts...arg_left) { write(arg); putchar(' '); write(arg_left...
 #endif
 #define ins(a, b) (G[a].emplace_back(b))
 
-const int maxn = 5e5 + 10;
-int n;
-int ans[maxn];
-std::vector<int> G[maxn];
-struct Event {
-    int x, lmt;
-};
-std::vector<Event> e[maxn];
-void init(int n) {
-    for (int i = 1; i <= n; i++) {
-        G[i].clear();
-    }
-}
-
-
-void dfs()
+const int maxn = 1e5 + 10;
+int a[maxn];
+std::vector<std::pair<int, int> > v;
 
 tsz main() {
     #ifdef LOCAL
@@ -61,20 +48,23 @@ tsz main() {
     int T;
     read(T);
     while (T--) {
-        int q;
-        read(q);
-        for (int i = 1; i <= n; i++) {
-            static int op, x, y;
-            read(op, x);
-            if (op == 1) {
-                ins(x, ++n);
-            } else {
-                read(y);
-                e[x].emplace_back((Event){y, n});
-            }
+        int n;
+        read(n);
+        for (int i = 1; i <= n * 2; i++) {
+            read(a[i]);
         }
-        memset(ans, 0, sizeof(int) * (n + 5));
-        dfs()
-        init();
+        std::sort(a + 1, a + n * 2 + 1); v.clear();
+        int ans = 0;
+        for (int i = 1; i < n; i++) {
+            ans += a[i + 1] - a[i] + a[i + n + 1] - a[i + n];
+            v.push_back(std::make_pair(a[i], a[i + n]));
+            // v.push_back(std::make_pair(a[i + 1], a[i + n + 1]));
+        }
+        v.push_back(std::make_pair(a[n], a[2 * n]));
+        writeln(ans);
+        for (auto p : v) {
+            writeln(p.first, p.second);
+        }
     }
+    return 0;
 }
