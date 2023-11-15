@@ -52,8 +52,8 @@ int log(int x, int y, bool up = false) {
 
 tsz main() {
     #ifdef LOCAL
-        // freopen(".in", "r", stdin);
-        // freopen(".out", "w", stdout);
+        freopen(".in", "r", stdin);
+        freopen(".out", "w", stdout);
     #endif
     
     for (int i = 2; i <= 63; i++) {
